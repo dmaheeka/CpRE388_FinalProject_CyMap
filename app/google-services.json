@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "968366387479",
+    "project_id": "cymap-5a5f3",
+    "storage_bucket": "cymap-5a5f3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968366387479:android:dae5ebe6d15ae59b4f4752",
+        "android_client_info": {
+          "package_name": "com.example.mapruler"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ3L51kRNBoYzn2cs9QtpQchOUj9Uh-ec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

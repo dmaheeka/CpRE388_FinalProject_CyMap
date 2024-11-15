@@ -309,7 +309,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Show a toast message to confirm the route was added
         Toast.makeText(MapsActivity.this, "Route added to Firebase", Toast.LENGTH_SHORT).show();
 
-        // Optionally, update the ListView (if you want to immediately display the new route)
+        // update the ListView : this currently crashes the app
         //routesList.add(new Route(name, address));
     }
 

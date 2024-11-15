@@ -56,10 +56,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ListView routesListView;
     private TextView buildingNameTextView;
     private TextView buildingInfoTextView;
+    private TextView stepsTextView;
     private ArrayList<Route> routesList;
     private ArrayAdapter<Route> routesAdapter;
     private Route routeToAdd;
     private String routeToAddWithButton;
+    private int totalNumSteps;
 
     private EditText searchBar;  // Search bar for manual location search
 
@@ -73,6 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         routesList = new ArrayList<>();
         buildingNameTextView = findViewById(R.id.buildingNameTextView);
         buildingInfoTextView = findViewById(R.id.buildingInfoTextView);
+        stepsTextView = findViewById(R.id.stepsTextView);
 
         // Set up the adapter for the ListView
         routesAdapter = new ArrayAdapter<Route>(this, android.R.layout.simple_list_item_1, routesList) {
@@ -405,6 +408,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                     // Decode the polyline into LatLng points using PolylineUtil.decodePolyline
                                     List<LatLng> decodedPath = PolylineUtil.decodePolyline(encodedPolyline);
+                                    Log.d("Polyline", "Decoded path size: " + decodedPath.size());
+                                    totalNumSteps = decodedPath.size() ;
+                                    stepsTextView.setText("steps: " + totalNumSteps);
 
                                     // Create PolylineOptions and add the decoded path
                                     PolylineOptions polylineOptions = new PolylineOptions()

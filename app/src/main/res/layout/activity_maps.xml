@@ -21,10 +21,10 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="-2dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="0dp" />
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="-2dp"
+        android:layout_marginEnd="-1dp"
+        android:layout_marginBottom="2dp" />
 
     <LinearLayout
         android:id="@+id/routeLayout"
@@ -115,6 +115,14 @@
         android:layout_marginTop="20dp"
         android:textColor="#FFFFFF" />
 
+    <TextView
+        android:id="@+id/stepsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Steps"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="50dp"
+        android:textSize="20sp" />
 
 
 </RelativeLayout>

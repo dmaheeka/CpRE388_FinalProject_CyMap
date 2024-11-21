@@ -1,5 +1,11 @@
 package com.example.mapruler;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,22 +29,21 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
+import com.google.maps.android.SphericalUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,10 +64,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView stepsTextView;
     private ArrayList<Route> routesList;
     private ArrayAdapter<Route> routesAdapter;
-    private Route routeToAdd;
-    private String routeToAddWithButton;
-    private int totalNumSteps;
-
     private EditText searchBar;  // Search bar for manual location search
 
     @Override
@@ -139,33 +140,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Please enter an address to search", Toast.LENGTH_SHORT).show();
             }
         });
+
+        //click listeners for markers
+     //   mMap.setOnMarkerClickListener(marker -> {
+            // Check if this marker is the invisible one (you can use the tag to identify it)
+       //     if ("clickable_marker".equals(marker.getTag())) {
+                // Handle click on the invisible marker (show building info, etc.)
+         //       Toast.makeText(MapsActivity.this, "Invisible marker clicked!", Toast.LENGTH_SHORT).show();
+                // You can display building info in the TextViews or perform other actions here
+           //     fetchLocationData(marker.getTitle()); // Assuming the marker title is the building name or address
+             //   return true;  // Return true to indicate the click was handled
+            //}
+            //return false; // If it's not the invisible marker, return false to let the default behavior happen
+        //});
     }
 
-
-
-    private void geocodeAndAddRoute(String address) {
-        Geocoder geocoder = new Geocoder(this);
-        try {
-            // Geocode the address entered by the user (only fetch 1 result)
-            List<android.location.Address> addresses = geocoder.getFromLocationName(address, 1);
-
-            if (addresses != null && !addresses.isEmpty()) {
-                android.location.Address location = addresses.get(0);
-                double lat = location.getLatitude();
-                double lng = location.getLongitude();
-
-                // Now add this route to Firebase
-                addRouteToDatabase(address, address, lat, lng);  // Using the same address for name and address fields
-            } else {
-                Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Geocoding failed", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
+    @SuppressLint("PotentialBehaviorOverride")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -195,6 +185,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getLastKnownLocation();
     }
 
+
+    private void geocodeAndAddRoute(String address) {
+        Geocoder geocoder = new Geocoder(this);
+        try {
+            // Geocode the address entered by the user (only fetch 1 result)
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+
+            if (addresses != null && !addresses.isEmpty()) {
+                android.location.Address location = addresses.get(0);
+                double lat = location.getLatitude();
+                double lng = location.getLongitude();
+
+                // Now add this route to Firebase
+                addRouteToDatabase(address, address, lat, lng);  // Using the same address for name and address fields
+
+
+            } else {
+                Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Geocoding failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void addInvisibleMarkerToMap(double latitude, double longitude) {
+        LatLng position = new LatLng(latitude, longitude);
+        Bitmap coloredBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        coloredBitmap.eraseColor(getResources().getColor(R.color.teal_200));
+
+        BitmapDescriptor coloredIcon = BitmapDescriptorFactory.fromBitmap(coloredBitmap);
+        // Create a transparent marker by setting an invisible icon
+        mMap.addMarker(new MarkerOptions()
+                        .position(position)
+                        .icon(coloredIcon)  // Invisible marker
+                        .title(buildingNameTextView.getText().toString()))
+                .setTag("clickable_marker");  // You can set a tag to identify markers if needed
+    }
+
+
     // Get last known location or request it if not available
     private void getLastKnownLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -214,6 +244,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
+
+
+
     private void fetchRoutesFromFirebase() {
         // Reference to the "routes" node in the Firebase Realtime Database
         DatabaseReference routesRef = FirebaseDatabase.getInstance().getReference("routes");
@@ -226,6 +259,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String name = snapshot.child("name").getValue(String.class);
                     String address = snapshot.child("address").getValue(String.class);
+                   // double latitude = snapshot.child("latitude").getValue(Double.class);
+                   // double longitude = snapshot.child("longitude").getValue(Double.class);
+
+                   // addInvisibleMarkerToMap(latitude, longitude);
 
                     // Add the route to the list
                     routesList.add(new Route(name, address));
@@ -246,7 +283,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Reference to the "locations" node in Firebase
         DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
 
-        // Directly access the location by its key (location is the building name, e.g., "kildee hall")
         locationsRef.child(location).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -269,6 +305,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     // Create a LatLng object for the coordinates
                     LatLng buildingLocation = new LatLng(latitude, longitude);
+                   // addInvisibleMarkerToMap(latitude, longitude);
 
                     // Log the coordinates (for debugging)
                     Log.d("Firebase", "Latitude: " + latitude + ", Longitude: " + longitude);
@@ -319,10 +356,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void searchLocation(String query) {
         // Geocode the entered search query (manual address search)
         geocodeAddress(query);
-       buildingNameTextView.setText(query);
+        buildingNameTextView.setText(query);
         //set the building info from the database
         fetchLocationData(query);
-       // buildingInfoTextView.setText("No additional info available");
+        // buildingInfoTextView.setText("No additional info available");
         // Clear the search bar
         searchBar.setText("");
 
@@ -348,6 +385,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Add the marker for the geocoded location
                 mMap.clear();  // Clear previous markers
                 mMap.addMarker(new MarkerOptions().position(geocodedLocation).title(address));
+
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(geocodedLocation, 15));
 
 
@@ -386,13 +424,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .position(currentLocation)
                         .title("Your Current Location"));
 
+
                 // Move the camera to the current location
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));  // Zoom to current location
 
                 // Build the GraphHopper API URL to request a walking route
                 String url = "https://graphhopper.com/api/1/route?point=" + location.getLatitude() + "," + location.getLongitude() +
                         "&point=" + destinationLat + "," + destinationLon +
-                        "&type=json&vehicle=foot&key=8d7f64ec-867f-4134-858d-cbc5a09ef9dc";  // Replace with your GraphHopper API Key
+                        "&type=json&vehicle=foot&key=8d7f64ec-867f-4134-858d-cbc5a09ef9dc";// Replace with your GraphHopper API Key
+
+                LatLng newLocation = new LatLng(destinationLat, destinationLon);
 
                 // Make HTTP request to the GraphHopper Directions API using Volley
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -409,17 +450,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     // Decode the polyline into LatLng points using PolylineUtil.decodePolyline
                                     List<LatLng> decodedPath = PolylineUtil.decodePolyline(encodedPolyline);
                                     Log.d("Polyline", "Decoded path size: " + decodedPath.size());
-                                    totalNumSteps = decodedPath.size() ;
-                                    stepsTextView.setText("steps: " + totalNumSteps);
+                                    // totalNumSteps = decodedPath.size() ;
+                                    // stepsTextView.setText("steps: " + totalNumSteps);
 
                                     // Create PolylineOptions and add the decoded path
                                     PolylineOptions polylineOptions = new PolylineOptions()
                                             .addAll(decodedPath)  // Add decoded LatLng points to polyline
                                             .width(5)
-                                            .color(getResources().getColor(R.color.colorPrimary));  // Customize polyline color
+                                            .color(getResources().getColor(R.color.colorPrimary));// Customize polyline color
+
 
                                     // Add the polyline to the map
                                     mMap.addPolyline(polylineOptions);
+
+
 
                                     // Optionally, zoom the map to fit the polyline
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -430,10 +474,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     for (LatLng latLng : decodedPath) {
                                         builder.include(latLng);
                                     }
+                                    double distance = SphericalUtil.computeDistanceBetween(currentLocation, newLocation);
+                                    String distanceFormatted = String.format("%.2f",distance);
+                                    stepsTextView.setText("distance: " + distanceFormatted + " meters\n" + "steps: " + (int)(distance / .762));
 
                                     // Build LatLngBounds and move the camera to fit the route
                                     LatLngBounds bounds = builder.build();
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 250));
+
 
                                 } catch (Exception e) {
                                     e.printStackTrace();

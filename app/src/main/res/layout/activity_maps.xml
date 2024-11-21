@@ -124,5 +124,14 @@
         android:layout_marginTop="50dp"
         android:textSize="20sp" />
 
+     <TextView
+         android:id="@+id/EstimatedTimeTextView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Estimated Time"
+         android:textColor="#FFFFFF"
+         android:layout_marginTop="90dp"
+         android:textSize="20sp" />
+
 
 </RelativeLayout>

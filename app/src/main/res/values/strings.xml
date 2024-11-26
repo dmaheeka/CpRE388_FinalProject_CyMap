@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MapRuler</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_login">CyMap</string>
+</resources>

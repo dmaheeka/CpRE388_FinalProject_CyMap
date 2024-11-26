@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity">
+
+    <!-- Map Fragment for displaying the map -->
+
+    <!-- ListView for displaying saved routes -->
+
+    <!-- Input layout for location and Find Distance button -->
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="360dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="-2dp"
+        android:layout_marginEnd="-1dp"
+        android:layout_marginBottom="373dp" />
+
+    <!-- Mode Selection Buttons -->
+
+
+    <!-- Hidden by default -->
+
+    <LinearLayout
+        android:id="@+id/modeSelectionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/inputLayout"
+        android:layout_marginBottom="200dp"
+        android:orientation="horizontal"
+        android:padding="8dp"> <!-- Added margin to avoid overlap -->
+
+        <Button
+            android:id="@+id/fromStartToDestinationButton"
+            android:layout_width="30dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:text="Start to Destination mode" />
+
+        <Button
+            android:id="@+id/toDestinationButton"
+            android:layout_width="30dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:text="Destination Mode" />
+
+        <!-- Multi-Stop Route Button -->
+        <Button
+            android:id="@+id/multiStopRouteButton"
+            android:layout_width="30dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:text="Multi-stop Mode" />
+    </LinearLayout>
+
+    <!-- Building Info Section: TextViews to display the building name and info -->
+
+    <LinearLayout
+    android:id="@+id/routeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_above="@+id/modeSelectionLayout"
+        android:layout_marginBottom="1dp"
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <ListView
+            android:id="@+id/routesListView"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="0.5dp"
+            android:fadeScrollbars="false"
+            android:layoutDirection="ltr"
+            android:padding="8dp"
+            android:scrollbarThumbVertical="@drawable/custom_scrollbar_thumb"
+            android:scrollbars="vertical" />
+
+        <Button
+            android:id="@+id/addRouteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Add Route" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Start Location Input (Hidden for To Destination Mode) -->
+        <EditText
+            android:id="@+id/startLocationEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Start Location..."
+            android:visibility="gone"
+            android:textSize="13sp"/>
+
+        <EditText
+            android:id="@+id/locationEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter destination location..."
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:visibility="visible"
+            android:textSize="13sp"/>
+
+        <EditText
+            android:id="@+id/multiStopEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Multiple Stops (comma-separated)"
+            android:inputType="text"
+            android:visibility="gone"
+            android:textSize="13sp"/>
+
+        <Button
+            android:id="@+id/findDistanceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Find Distance"
+            android:visibility="visible"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buildingInfoLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:textColor="#000000"
+        android:background="@android:color/white"/>
+
+    <!-- TextView for building name -->
+    <TextView
+        android:id="@+id/buildingNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Building Name"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- TextView for building information -->
+    <TextView
+        android:id="@+id/buildingInfoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Building Info"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/stepsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Steps"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="50dp"
+        android:textSize="20sp" />
+
+</RelativeLayout>
+

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="colorPrimary">#CC1A0E</color>
+    <color name="colorPrimaryLight">#E385A5</color>
+    <color name="gold">#FFD700</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="red">#C41E3A</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">MapRuler</string>
+    <string name="gcm_defaultSenderId" translatable="false">968366387479</string>
+    <string name="google_api_key" translatable="false">AIzaSyAQ3L51kRNBoYzn2cs9QtpQchOUj9Uh-ec</string>
+    <string name="google_app_id" translatable="false">1:968366387479:android:dae5ebe6d15ae59b4f4752</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAQ3L51kRNBoYzn2cs9QtpQchOUj9Uh-ec</string>
+    <string name="google_storage_bucket" translatable="false">cymap-5a5f3.firebasestorage.app</string>
+    <string name="project_id" translatable="false">cymap-5a5f3</string>
+    <string name="title_activity_login">CyMap</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <style name="Theme.MapRuler" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        
+        <item name="colorPrimary">@color/gold</item>
+        <item name="colorPrimaryVariant">@color/red</item>
+        <item name="colorOnPrimary">@color/red</item>
+        
+        <item name="colorSecondary">@color/gold</item>
+        <item name="colorSecondaryVariant">@color/gold</item>
+        <item name="colorOnSecondary">@color/black</item>
+        
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        
+        <item name="android:windowBackground">@color/white</item>
+
+
+        
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        
+        <item name="android:navigationBarColor">?attr/colorPrimaryVariant</item>
+
+
+        
+    </style>
+</resources>

@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-mergeDebugResources-38:\\layout\\activity_maps.xml",
+        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\layout\\activity_maps.xml"
+    },
+    {
+        "merged": "com.example.mapruler.app-mergeDebugResources-38:/layout/activity_maps.xml",
+        "source": "com.example.mapruler.app-main-41:/layout/activity_maps.xml"
+    },
+    {
+        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-mergeDebugResources-38:\\layout\\login_xml.xml",
+        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\layout\\login_xml.xml"
+    }
+]

@@ -619,7 +619,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     }
                                     double distance = SphericalUtil.computeDistanceBetween(currentLocation, newLocation);
                                     String distanceFormatted = String.format("%.2f",distance);
-                                    stepsTextView.setText("distance: " + distanceFormatted + " meters\n" + "steps: " + (int)(distance / .762));
+                                    stepsTextView.setText("distance: " + distanceFormatted + " meters\n" + "steps: " + (int)(distance / .762)+"\n"+ "Minutes: " + Math.round(distance / 0.95 /60));
+                                    //stepsTextView.setText("distance: " + distanceFormatted + " meters\n" + "steps: " + (int)(distance / .762));
 
                                     // Build LatLngBounds and move the camera to fit the route
                                     LatLngBounds bounds = builder.build();
@@ -771,12 +772,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 builder.include(latLng);
                             }
 
+
                             // Calculate the distance and steps (assumes 0.762 meters per step)
                             double distance = SphericalUtil.computeDistanceBetween(startLocation, destinationLocation);
                             String distanceFormatted = String.format("%.2f", distance);
-                            stepsTextView.setText("Distance: " + distanceFormatted + " meters\n" +
-                                    "Steps: " + (int)(distance / .762)); // Approximate steps
+                          //  stepsTextView.setText("Distance: " + distanceFormatted + " meters\n" +
+                             //       "Steps: " + (int)(distance / .762)); // Approximate steps
 
+                            stepsTextView.setText("distance: " + distanceFormatted + " meters\n" + "steps: " + (int)(distance / .762)+"\n"+ "Minutes: " + Math.round(distance / 0.95 /60));
                             // Build LatLngBounds and move the camera to fit the route
                             LatLngBounds bounds = builder.build();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 250));
@@ -889,9 +892,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Method to update steps and building info text
     private void updateStepsAndBuildingInfo(LatLng start, List<LatLng> stops, LatLng destination, double totalDistance) {
         // Update the steps TextView with the calculated distance and estimated steps
+
         String formattedDistance = String.format("%.2f", totalDistance);  // Format the total distance
         int totalSteps = (int) (totalDistance / 0.762);  // Assuming average step length of 0.762 meters
-        stepsTextView.setText("Distance: " + formattedDistance + " meters\nSteps: " + totalSteps);
+        stepsTextView.setText("distance: " + formattedDistance + " meters\n" + "steps: " + totalSteps+"\n"+ "Minutes: " + Math.round(totalDistance / 0.95 /60));
+      //  stepsTextView.setText("Distance: " + formattedDistance + " meters\nSteps: " + totalSteps);
 
         // Update building info (this can be more specific depending on your data, for now it's a placeholder)
         String buildingInfo = "Building Information: \n";

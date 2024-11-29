@@ -144,17 +144,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         //click listeners for markers
-      //  mMap.setOnMarkerClickListener(marker -> {
-            // Check if this marker is the invisible one (you can use the tag to identify it)
+        //  mMap.setOnMarkerClickListener(marker -> {
+        // Check if this marker is the invisible one (you can use the tag to identify it)
         //    if ("clickable_marker".equals(marker.getTag())) {
-                // Handle click on the invisible marker (show building info, etc.)
-         //       Toast.makeText(MapsActivity.this, "Invisible marker clicked!", Toast.LENGTH_SHORT).show();
-                // You can display building info in the TextViews or perform other actions here
-          //      fetchLocationData(marker.getTitle()); // Assuming the marker title is the building name or address
-          //      return true;  // Return true to indicate the click was handled
-          //  }
-         //   return false; // If it's not the invisible marker, return false to let the default behavior happen
-      //  });
+        // Handle click on the invisible marker (show building info, etc.)
+        //       Toast.makeText(MapsActivity.this, "Invisible marker clicked!", Toast.LENGTH_SHORT).show();
+        // You can display building info in the TextViews or perform other actions here
+        //      fetchLocationData(marker.getTitle()); // Assuming the marker title is the building name or address
+        //      return true;  // Return true to indicate the click was handled
+        //  }
+        //   return false; // If it's not the invisible marker, return false to let the default behavior happen
+        //  });
 
 
     }
@@ -268,7 +268,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double latitude = snapshot.child("latitude").getValue(Double.class);
                     double longitude = snapshot.child("longitude").getValue(Double.class);
 
-                 //   addInvisibleMarkerToMap(latitude, longitude);
+                    //   addInvisibleMarkerToMap(latitude, longitude);
 
                     // Add the route to the list
                     routesList.add(new Route(name, address));

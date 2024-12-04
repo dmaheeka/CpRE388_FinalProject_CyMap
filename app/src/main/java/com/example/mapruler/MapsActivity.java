@@ -79,6 +79,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean isToDestinationMode = true;
     private boolean isMultiStopMode = false;
 
+    DatabaseReference routesRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,9 +132,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                Toast.makeText(MapsActivity.this, "Please enter an address", Toast.LENGTH_SHORT).show();
 //            }
 //        });
-
-        // Fetch routes from Firebase
-        fetchRoutesFromFirebase();
 
         // Handle click events on list items
         routesListView.setOnItemClickListener((parent, view, position, id) -> {
@@ -233,6 +232,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+
+        // Reference to the "routes" node in the Firebase Realtime Database
+        routesRef = FirebaseDatabase.getInstance().getReference("routes");
+        routesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                routesList.clear();  // Clear the previous data
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // add route, if associated with current user
+                    if(snapshot.child("uid").getValue(String.class).equals(UserData.getInstance().getUid())) {
+                        String name = snapshot.child("name").getValue(String.class);
+                        String address = snapshot.child("address").getValue(String.class);
+                        // double latitude = snapshot.child("latitude").getValue(Double.class);
+                        // double longitude = snapshot.child("longitude").getValue(Double.class);
+
+                        // addInvisibleMarkerToMap(latitude, longitude);
+
+                        // Add the route to the list
+                        routesList.add(new Route(name, address));
+                    }
+                }
+
+                // Notify the adapter that data has been updated
+                routesAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors, if any
+                Toast.makeText(MapsActivity.this, "Error fetching routes", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 //        // Set up the search button functionality
 //        findViewById(R.id.findDistanceButton).setOnClickListener(v -> {
@@ -364,41 +396,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
-
-
-
-    private void fetchRoutesFromFirebase() {
-        // Reference to the "routes" node in the Firebase Realtime Database
-        DatabaseReference routesRef = FirebaseDatabase.getInstance().getReference("routes");
-
-        // Retrieve data from Firebase
-        routesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                routesList.clear();  // Clear the previous data
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String name = snapshot.child("name").getValue(String.class);
-                    String address = snapshot.child("address").getValue(String.class);
-                   // double latitude = snapshot.child("latitude").getValue(Double.class);
-                   // double longitude = snapshot.child("longitude").getValue(Double.class);
-
-                   // addInvisibleMarkerToMap(latitude, longitude);
-
-                    // Add the route to the list
-                    routesList.add(new Route(name, address));
-                }
-
-                // Notify the adapter that data has been updated
-                routesAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle errors, if any
-                Toast.makeText(MapsActivity.this, "Error fetching routes", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
     private void fetchLocationData(String location) {
         // Reference to the "locations" node in Firebase
         DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
@@ -461,6 +458,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Create a new entry in the "routes" collection
         DatabaseReference newRouteRef = routesRef.push();
+        newRouteRef.child("uid").setValue(UserData.getInstance().getUid());
         newRouteRef.child("name").setValue(name);
         newRouteRef.child("address").setValue(address);
         newRouteRef.child("latitude").setValue(latitude);
@@ -469,8 +467,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Show a toast message to confirm the route was added
         Toast.makeText(MapsActivity.this, "Route added to Firebase", Toast.LENGTH_SHORT).show();
 
-        // update the ListView : this currently crashes the app
-        //routesList.add(new Route(name, address));
+        routesList.add(new Route(name, address));
+        routesAdapter.notifyDataSetChanged();
     }
 
     private void searchLocation(String query) {
@@ -532,8 +530,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Optionally, you can call drawRouteFromCurrentLocation() here if needed
                 drawRouteFromCurrentLocation(lat, lng);
 
-                // Save the route to Firebase
-                addRouteToDatabase(address, address, lat, lng);
             } else {
                 Log.e("Geocoder", "Address not found: " + address);  // Log error if not found
                 Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();
@@ -692,8 +688,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Draw route between start and destination
                 drawRoute(startLat, startLng, destLat, destLng);
 
-                // Add the route to Firebase
-                addRouteToDatabase("Route from " + startAddress + " to " + destinationAddress, destinationAddress, destLat, destLng);
 
             } else {
                 Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();

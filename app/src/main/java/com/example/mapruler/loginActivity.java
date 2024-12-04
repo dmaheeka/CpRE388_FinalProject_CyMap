@@ -54,6 +54,8 @@ public class loginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // Sign-in successful, navigate to MapsActivity
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                // Store firebase user in singleton for future use
+                                UserData.getInstance().setFirebaseUser(user);
                                 if (user != null) {
                                     // Now, navigate to MapsActivity
                                     Intent intent = new Intent(loginActivity.this, MapsActivity.class);

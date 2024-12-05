@@ -43,6 +43,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.maps.android.SphericalUtil;
 
 import org.json.JSONArray;
@@ -249,51 +251,91 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void fetchLocationData(String location) {
-        // need to switch to firestore reference instead of realtime
-        DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
+//    private void fetchLocationData(String location) {
+//        // need to switch to firestore reference instead of realtime
+//        DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
+//
+//        locationsRef.child(location).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.exists()) {
+//                    // Retrieve the building name and info
+//                    String buildingName = dataSnapshot.child("building_name").getValue(String.class);
+//                    String buildingInfo = dataSnapshot.child("building_info").getValue(String.class);
+//
+//                    // Log the retrieved values to check
+//                    Log.d("Firebase", "Building Name: " + buildingName);
+//                    Log.d("Firebase", "Building Info: " + buildingInfo);
+//
+//                    // Set the retrieved data to the TextViews
+//                    buildingNameTextView.setText(buildingName != null ? buildingName : "No building name found");
+//                    buildingInfoTextView.setText(buildingInfo != null ? buildingInfo : "No building info found");
+//
+//                    double latitude = dataSnapshot.child("latitude").getValue(Double.class);
+//                    double longitude = dataSnapshot.child("longitude").getValue(Double.class);
+//
+//                    // Create a LatLng object for the coordinates. This was for adding a marker for the building
+//                    LatLng buildingLocation = new LatLng(latitude, longitude);
+//
+//                    // Log the coordinates (for debugging)
+//                    Log.d("Firebase", "Latitude: " + latitude + ", Longitude: " + longitude);
+//
+//                } else {
+//                    // If no data found for the location
+//                    Log.d("Firebase", "No data found for the location: " + location);
+//                    buildingNameTextView.setText("Building not found");
+//                    buildingInfoTextView.setText("No additional info available");
+//                }
+//            }
 
-        locationsRef.child(location).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Retrieve the building name and info
-                    String buildingName = dataSnapshot.child("building_name").getValue(String.class);
-                    String buildingInfo = dataSnapshot.child("building_info").getValue(String.class);
 
-                    // Log the retrieved values to check
-                    Log.d("Firebase", "Building Name: " + buildingName);
-                    Log.d("Firebase", "Building Info: " + buildingInfo);
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                // Handle errors, if any
+//                Toast.makeText(MapsActivity.this, "Error fetching building data", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
-                    // Set the retrieved data to the TextViews
-                    buildingNameTextView.setText(buildingName != null ? buildingName : "No building name found");
-                    buildingInfoTextView.setText(buildingInfo != null ? buildingInfo : "No building info found");
 
-                    double latitude = dataSnapshot.child("latitude").getValue(Double.class);
-                    double longitude = dataSnapshot.child("longitude").getValue(Double.class);
+    private void fetchLocationData(String locationId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("locations")
+                .document(locationId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Retrieve building name
+                        String buildingName = documentSnapshot.getString("name");
+                        buildingNameTextView.setText(buildingName != null ? buildingName : "No building name found");
 
-                    // Create a LatLng object for the coordinates. This was for adding a marker for the building
-                    LatLng buildingLocation = new LatLng(latitude, longitude);
+                        // Retrieve GeoPoint and display latitude and longitude
+                        GeoPoint geoPoint = documentSnapshot.getGeoPoint("location");
+                        if (geoPoint != null) {
+                            double latitude = geoPoint.getLatitude();
+                            double longitude = geoPoint.getLongitude();
+                            // Optionally, display the coordinates or use them for map plotting
+                            Log.d("Firebase", "Latitude: " + latitude + ", Longitude: " + longitude);
+                        }
 
-                    // Log the coordinates (for debugging)
-                    Log.d("Firebase", "Latitude: " + latitude + ", Longitude: " + longitude);
-
-                } else {
-                    // If no data found for the location
-                    Log.d("Firebase", "No data found for the location: " + location);
-                    buildingNameTextView.setText("Building not found");
-                    buildingInfoTextView.setText("No additional info available");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle errors, if any
-                Toast.makeText(MapsActivity.this, "Error fetching building data", Toast.LENGTH_SHORT).show();
-            }
-        });
+                        // Retrieve hours array
+                        ArrayList<String> businessHours = (ArrayList<String>) documentSnapshot.get("hours");
+                        if (businessHours != null) {
+                            StringBuilder hoursString = new StringBuilder("Business Hours:\n");
+                            for (String hour : businessHours) {
+                                hoursString.append(hour).append("\n");
+                            }
+                            buildingInfoTextView.setText(hoursString.toString());
+                        }
+                    } else {
+                        buildingNameTextView.setText("Location not found");
+                        buildingInfoTextView.setText("No business hours available");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(MapsActivity.this, "Error fetching location data", Toast.LENGTH_SHORT).show();
+                });
     }
-
 
     private void fetchRouteDataFromFirebase(Route route) {
         // Combine name and address to form a full address
@@ -333,6 +375,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void geocodeAddress(String address) {
+        // Add Ames, Iowa to the address so that the user doesn't have to
+        address += " ames iowa";
         Geocoder geocoder = new Geocoder(this);
         try {
             Log.d("Geocoder", "Geocoding address: " + address);  // Log the address being searched

@@ -52,7 +52,8 @@ dependencies {
     // Explicit dependencies in case they are not in your libs.versions.toml
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.firebase:firebase-auth:21.1.0")
-    implementation("com.google.firebase:firebase-database:20.0.2")
+   // implementation("com.google.firebase:firebase-database:20.0.2") // realtime database
+    implementation ("com.google.firebase:firebase-firestore:24.5.0")
     implementation("com.google.android.libraries.places:places:2.5.0")
     implementation("com.google.android.gms:play-services-maps:17.0.1")
     implementation("com.android.volley:volley:1.2.1")

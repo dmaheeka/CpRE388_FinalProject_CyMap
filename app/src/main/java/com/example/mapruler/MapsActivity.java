@@ -53,8 +53,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private ListView routesListView;
-    private TextView buildingNameTextView;
-    private TextView buildingInfoTextView;
     private TextView stepsTextView;
     private ArrayList<Route> routesList;
     private ArrayAdapter<Route> routesAdapter;
@@ -68,8 +66,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Initialize the ListView and the ArrayList
         routesListView = findViewById(R.id.routesListView);
         routesList = new ArrayList<>();
-        //buildingNameTextView = findViewById(R.id.buildingNameTextView);
-       // buildingInfoTextView = findViewById(R.id.buildingInfoTextView);
         stepsTextView = findViewById(R.id.stepsTextView);
 
         // Set up the adapter for the ListView
@@ -136,8 +132,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
-
     @SuppressLint("PotentialBehaviorOverride")
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -182,7 +176,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Now add this route to Firebase
                 addRouteToDatabase(address, address, lat, lng);  // Using the same address for name and address fields
-
 
             } else {
                 Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();
@@ -270,23 +263,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Toast.makeText(MapsActivity.this, "Error fetching location data", Toast.LENGTH_SHORT).show();
                 });
     }
-                       // if (businessHours != null) {
-                        //    StringBuilder hoursString = new StringBuilder("Business Hours:\n");
-                        //    for (String hour : businessHours) {
-                          //      hoursString.append(hour).append("\n");
-                         //   }
-                          //  buildingInfoTextView.setText(hoursString.toString());
-                      //  }
-                 //   } else {
-                  //      buildingNameTextView.setText("Location not found");
-                     //   buildingInfoTextView.setText("No business hours available");
-                 //   }
-             //   })
-             //   .addOnFailureListener(e -> {
-             //       Toast.makeText(MapsActivity.this, "Error fetching location data", Toast.LENGTH_SHORT).show();
-            //    });
-    //}
-
 
     private void fetchRouteDataFromFirebase(Route route) {
         // Combine name and address to form a full address
@@ -316,10 +292,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void searchLocation(String query) {
         // Geocode the entered search query (manual address search)
         geocodeAddress(query);
-       // buildingNameTextView.setText(query);
+
         //set the building info from the database
         fetchLocationData(query);
-        // buildingInfoTextView.setText("No additional info available");
+
         // Clear the search bar
         searchBar.setText("");
 
@@ -328,6 +304,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void geocodeAddress(String address) {
         // Add Ames, Iowa to the address so that the user doesn't have to
         address += " ames iowa";
+
         Geocoder geocoder = new Geocoder(this);
         try {
             Log.d("Geocoder", "Geocoding address: " + address);  // Log the address being searched
@@ -397,6 +374,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // HTTP request to the GraphHopper
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                         new Response.Listener<String>() {
+                            @SuppressLint("SetTextI18n")
                             @Override
                             public void onResponse(String response) {
                                 try {
@@ -428,18 +406,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     for (LatLng latLng : decodedPath) {
                                         builder.include(latLng);
                                     }
+                                    //calculate the distance in meters, steps, and ETA
                                     double distance = SphericalUtil.computeDistanceBetween(currentLocation, newLocation);
-                                    String distanceFormatted = String.format("%.2f",distance);
+                                    @SuppressLint("DefaultLocale") String distanceFormatted = String.format("%.2f",distance);
                                     stepsTextView.setText("distance: " + distanceFormatted +
                                                           " meters\n" + "steps: " + (int)(distance / .762)  +
                                                           "\nMinutes: " + Math.round(distance / 0.95 /60));
 
-
-
                                     // Build LatLngBounds and move the camera to fit the route
                                     LatLngBounds bounds = builder.build();
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 250));
-
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -464,5 +440,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-
 }

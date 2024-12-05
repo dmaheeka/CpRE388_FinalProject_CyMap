@@ -17,6 +17,7 @@ public class loginActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
+    private Button signUpButton;
 
     private FirebaseAuth mAuth; // Firebase Authentication instance
 
@@ -32,7 +33,9 @@ public class loginActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.username);  // Email input field
         passwordEditText = findViewById(R.id.password);  // Password input field
         loginButton = findViewById(R.id.login_button);// Login button
+        signUpButton = findViewById(R.id.sign_up_button); // Sign up button
         loginButton.setVisibility(View.VISIBLE);
+        signUpButton.setVisibility(View.VISIBLE);
 
 
         // Set up login button click listener
@@ -55,7 +58,7 @@ public class loginActivity extends AppCompatActivity {
                                 // Sign-in successful, navigate to MapsActivity
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 if (user != null) {
-                                    // Now, navigate to MapsActivity
+                                    // switch to map activity
                                     Intent intent = new Intent(loginActivity.this, MapsActivity.class);
                                     startActivity(intent);
                                     finish();  // Close the loginActivity so the user can't go back to it
@@ -63,6 +66,39 @@ public class loginActivity extends AppCompatActivity {
                             } else {
                                 // If sign-in fails, display a message to the user
                                 Toast.makeText(loginActivity.this, "Authentication failed. Please check your email and password.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+
+        // Set up sign up button click listener
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = usernameEditText.getText().toString().trim();
+                String password = passwordEditText.getText().toString().trim();
+
+                // Basic validation
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(loginActivity.this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Call FirebaseAuth to create a new user with email and password
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(loginActivity.this, task -> {
+                            if (task.isSuccessful()) {
+                                // Sign-up successful, navigate to MapsActivity
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if (user != null) {
+                                    // Now, navigate to MapsActivity
+                                    Intent intent = new Intent(loginActivity.this, MapsActivity.class);
+                                    startActivity(intent);
+                                    finish();  // Close the loginActivity so the user can't go back to it
+                                }
+                            } else {
+                                // If sign-up fails, display a message to the user
+                                Toast.makeText(loginActivity.this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
                             }
                         });
             }

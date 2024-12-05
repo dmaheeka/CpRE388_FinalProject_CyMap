@@ -1,12 +1,15 @@
 package com.example.mapruler;
 public class Route {
+
+    private RouteType routeType;
     private String name;
     private String address;
     private double latitude;
     private double longitude;
 
     // Constructor
-    public Route(String name, String address) {
+    public Route(RouteType routeType, String name, String address) {
+        this.routeType = routeType;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;

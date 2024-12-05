@@ -59,7 +59,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private ListView routesListView;
-    private TextView EstimatedTimeTextView;
     private TextView buildingNameTextView;
     private TextView buildingInfoTextView;
     private TextView stepsTextView;
@@ -78,7 +77,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buildingNameTextView = findViewById(R.id.buildingNameTextView);
         buildingInfoTextView = findViewById(R.id.buildingInfoTextView);
         stepsTextView = findViewById(R.id.stepsTextView);
-        EstimatedTimeTextView = findViewById(R.id.EstimatedTimeTextView);
 
         // Set up the adapter for the ListView
         routesAdapter = new ArrayAdapter<Route>(this, android.R.layout.simple_list_item_1, routesList) {
@@ -439,8 +437,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     }
                                     double distance = SphericalUtil.computeDistanceBetween(currentLocation, newLocation);
                                     String distanceFormatted = String.format("%.2f",distance);
-                                    stepsTextView.setText("distance: " + distanceFormatted + " meters\n" + "steps: " + (int)(distance / .762));
-                                    EstimatedTimeTextView.setText("Minutes: " + Math.round(distance / 0.95 /60));
+                                    stepsTextView.setText("distance: " + distanceFormatted +
+                                                          " meters\n" + "steps: " + (int)(distance / .762)  +
+                                                          "\nMinutes: " + Math.round(distance / 0.95 /60));
+
 
 
                                     // Build LatLngBounds and move the camera to fit the route

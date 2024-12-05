@@ -3,7 +3,6 @@ package com.example.mapruler;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -15,10 +14,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -29,11 +26,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -46,10 +40,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.maps.android.SphericalUtil;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +68,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Initialize the ListView and the ArrayList
         routesListView = findViewById(R.id.routesListView);
         routesList = new ArrayList<>();
-        buildingNameTextView = findViewById(R.id.buildingNameTextView);
-        buildingInfoTextView = findViewById(R.id.buildingInfoTextView);
+        //buildingNameTextView = findViewById(R.id.buildingNameTextView);
+       // buildingInfoTextView = findViewById(R.id.buildingInfoTextView);
         stepsTextView = findViewById(R.id.stepsTextView);
 
         // Set up the adapter for the ListView
@@ -251,53 +243,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-//    private void fetchLocationData(String location) {
-//        // need to switch to firestore reference instead of realtime
-//        DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
-//
-//        locationsRef.child(location).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    // Retrieve the building name and info
-//                    String buildingName = dataSnapshot.child("building_name").getValue(String.class);
-//                    String buildingInfo = dataSnapshot.child("building_info").getValue(String.class);
-//
-//                    // Log the retrieved values to check
-//                    Log.d("Firebase", "Building Name: " + buildingName);
-//                    Log.d("Firebase", "Building Info: " + buildingInfo);
-//
-//                    // Set the retrieved data to the TextViews
-//                    buildingNameTextView.setText(buildingName != null ? buildingName : "No building name found");
-//                    buildingInfoTextView.setText(buildingInfo != null ? buildingInfo : "No building info found");
-//
-//                    double latitude = dataSnapshot.child("latitude").getValue(Double.class);
-//                    double longitude = dataSnapshot.child("longitude").getValue(Double.class);
-//
-//                    // Create a LatLng object for the coordinates. This was for adding a marker for the building
-//                    LatLng buildingLocation = new LatLng(latitude, longitude);
-//
-//                    // Log the coordinates (for debugging)
-//                    Log.d("Firebase", "Latitude: " + latitude + ", Longitude: " + longitude);
-//
-//                } else {
-//                    // If no data found for the location
-//                    Log.d("Firebase", "No data found for the location: " + location);
-//                    buildingNameTextView.setText("Building not found");
-//                    buildingInfoTextView.setText("No additional info available");
-//                }
-//            }
-
-
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                // Handle errors, if any
-//                Toast.makeText(MapsActivity.this, "Error fetching building data", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
-
     private void fetchLocationData(String locationId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("locations")
@@ -307,35 +252,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (documentSnapshot.exists()) {
                         // Retrieve building name
                         String buildingName = documentSnapshot.getString("name");
-                        buildingNameTextView.setText(buildingName != null ? buildingName : "No building name found");
+                        //buildingNameTextView.setText(buildingName != null ? buildingName : "No building name found");
 
                         // Retrieve GeoPoint and display latitude and longitude
                         GeoPoint geoPoint = documentSnapshot.getGeoPoint("location");
-                        if (geoPoint != null) {
-                            double latitude = geoPoint.getLatitude();
-                            double longitude = geoPoint.getLongitude();
-                            // Optionally, display the coordinates or use them for map plotting
-                            Log.d("Firebase", "Latitude: " + latitude + ", Longitude: " + longitude);
-                        }
 
                         // Retrieve hours array
                         ArrayList<String> businessHours = (ArrayList<String>) documentSnapshot.get("hours");
-                        if (businessHours != null) {
-                            StringBuilder hoursString = new StringBuilder("Business Hours:\n");
-                            for (String hour : businessHours) {
-                                hoursString.append(hour).append("\n");
-                            }
-                            buildingInfoTextView.setText(hoursString.toString());
-                        }
+                        // Create and show the DialogFragment
+                         BuildingInfoPopup dialogFragment = BuildingInfoPopup.newInstance(buildingName, businessHours);
+                        dialogFragment.show(getSupportFragmentManager(), "LocationDetailsDialog");
                     } else {
-                        buildingNameTextView.setText("Location not found");
-                        buildingInfoTextView.setText("No business hours available");
+                        Toast.makeText(MapsActivity.this, "Location not found", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(MapsActivity.this, "Error fetching location data", Toast.LENGTH_SHORT).show();
                 });
     }
+                       // if (businessHours != null) {
+                        //    StringBuilder hoursString = new StringBuilder("Business Hours:\n");
+                        //    for (String hour : businessHours) {
+                          //      hoursString.append(hour).append("\n");
+                         //   }
+                          //  buildingInfoTextView.setText(hoursString.toString());
+                      //  }
+                 //   } else {
+                  //      buildingNameTextView.setText("Location not found");
+                     //   buildingInfoTextView.setText("No business hours available");
+                 //   }
+             //   })
+             //   .addOnFailureListener(e -> {
+             //       Toast.makeText(MapsActivity.this, "Error fetching location data", Toast.LENGTH_SHORT).show();
+            //    });
+    //}
+
 
     private void fetchRouteDataFromFirebase(Route route) {
         // Combine name and address to form a full address
@@ -365,7 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void searchLocation(String query) {
         // Geocode the entered search query (manual address search)
         geocodeAddress(query);
-        buildingNameTextView.setText(query);
+       // buildingNameTextView.setText(query);
         //set the building info from the database
         fetchLocationData(query);
         // buildingInfoTextView.setText("No additional info available");
@@ -458,8 +409,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     // Decode the polyline into LatLng points using PolylineUtil.decodePolyline
                                     List<LatLng> decodedPath = PolylineUtil.decodePolyline(encodedPolyline);
                                     Log.d("Polyline", "Decoded path size: " + decodedPath.size());
-                                    // totalNumSteps = decodedPath.size() ;
-                                    // stepsTextView.setText("steps: " + totalNumSteps);
 
                                     // Create PolylineOptions and add the decoded path
                                     PolylineOptions polylineOptions = new PolylineOptions()

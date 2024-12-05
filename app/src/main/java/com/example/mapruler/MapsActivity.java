@@ -142,21 +142,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Please enter an address to search", Toast.LENGTH_SHORT).show();
             }
         });
-
-        //click listeners for markers
-        //  mMap.setOnMarkerClickListener(marker -> {
-        // Check if this marker is the invisible one (you can use the tag to identify it)
-        //    if ("clickable_marker".equals(marker.getTag())) {
-        // Handle click on the invisible marker (show building info, etc.)
-        //       Toast.makeText(MapsActivity.this, "Invisible marker clicked!", Toast.LENGTH_SHORT).show();
-        // You can display building info in the TextViews or perform other actions here
-        //      fetchLocationData(marker.getTitle()); // Assuming the marker title is the building name or address
-        //      return true;  // Return true to indicate the click was handled
-        //  }
-        //   return false; // If it's not the invisible marker, return false to let the default behavior happen
-        //  });
-
-
     }
 
 
@@ -177,14 +162,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        // Enable map gestures individually for more control
+        // Enable map gestures. Once we zoom in, we still can't zoom out
         mMap.getUiSettings().setZoomGesturesEnabled(true);    // Pinch-to-zoom
         mMap.getUiSettings().setZoomControlsEnabled(true);    // + and - buttons for zoom
-        mMap.getUiSettings().setScrollGesturesEnabled(true);  // Allow dragging the map
-        mMap.getUiSettings().setTiltGesturesEnabled(true);    // Allow tilting the map
-        mMap.getUiSettings().setRotateGesturesEnabled(true);  // Allow rotating the map
+        mMap.getUiSettings().setScrollGesturesEnabled(true);  // dragging the map
+        mMap.getUiSettings().setTiltGesturesEnabled(true);    // tilting the map
+        mMap.getUiSettings().setRotateGesturesEnabled(true);  // rotating the map
 
-        // Load the custom map style
+        // custom map style from MapRuler lab. Not exactly needed
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_mine));
 
         // Move camera to the current location
@@ -195,7 +180,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void geocodeAndAddRoute(String address) {
         Geocoder geocoder = new Geocoder(this);
         try {
-            // Geocode the address entered by the user (only fetch 1 result)
+            // Geocode the address entered by the user
             List<Address> addresses = geocoder.getFromLocationName(address, 1);
 
             if (addresses != null && !addresses.isEmpty()) {
@@ -216,21 +201,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void addInvisibleMarkerToMap(double latitude, double longitude) {
-        LatLng position = new LatLng(latitude, longitude);
-        Bitmap coloredBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-        coloredBitmap.eraseColor(getResources().getColor(R.color.teal_200));
-
-        BitmapDescriptor coloredIcon = BitmapDescriptorFactory.fromBitmap(coloredBitmap);
-        // Create a transparent marker by setting an invisible icon
-        mMap.addMarker(new MarkerOptions()
-                        .position(position)
-                        .icon(coloredIcon)  // Invisible marker
-                        .title(buildingNameTextView.getText().toString()))
-                .setTag("clickable_marker");  // You can set a tag to identify markers if needed
-    }
-
-
     // Get last known location or request it if not available
     private void getLastKnownLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -250,11 +220,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
-
-
-
     private void fetchRoutesFromFirebase() {
-        // Reference to the "routes" node in the Firebase Realtime Database
+        // need to switch to Firestore reference instead of realtime
         DatabaseReference routesRef = FirebaseDatabase.getInstance().getReference("routes");
 
         // Retrieve data from Firebase
@@ -267,8 +234,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String address = snapshot.child("address").getValue(String.class);
                     double latitude = snapshot.child("latitude").getValue(Double.class);
                     double longitude = snapshot.child("longitude").getValue(Double.class);
-
-                    //   addInvisibleMarkerToMap(latitude, longitude);
 
                     // Add the route to the list
                     routesList.add(new Route(name, address));
@@ -285,8 +250,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+
     private void fetchLocationData(String location) {
-        // Reference to the "locations" node in Firebase
+        // need to switch to firestore reference instead of realtime
         DatabaseReference locationsRef = FirebaseDatabase.getInstance().getReference("locations");
 
         locationsRef.child(location).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -305,13 +271,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     buildingNameTextView.setText(buildingName != null ? buildingName : "No building name found");
                     buildingInfoTextView.setText(buildingInfo != null ? buildingInfo : "No building info found");
 
-                    // Optionally, handle geocoding here if needed
                     double latitude = dataSnapshot.child("latitude").getValue(Double.class);
                     double longitude = dataSnapshot.child("longitude").getValue(Double.class);
 
-                    // Create a LatLng object for the coordinates
+                    // Create a LatLng object for the coordinates. This was for adding a marker for the building
                     LatLng buildingLocation = new LatLng(latitude, longitude);
-                    addInvisibleMarkerToMap(latitude, longitude);
 
                     // Log the coordinates (for debugging)
                     Log.d("Firebase", "Latitude: " + latitude + ", Longitude: " + longitude);
@@ -333,7 +297,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
     private void fetchRouteDataFromFirebase(Route route) {
         // Combine name and address to form a full address
         String address = route.getName() + " " + route.getAddress();
@@ -342,7 +305,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
     private void addRouteToDatabase(String name, String address, double latitude, double longitude) {
-        // Reference to the "routes" node in Firebase
+      //need to switch to firebase reference instead of realtime
         DatabaseReference routesRef = FirebaseDatabase.getInstance().getReference("routes");
 
         // Create a new entry in the "routes" collection
@@ -386,7 +349,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Log the geocoded results for debugging
                 Log.d("Geocoder", "Geocoded location: " + lat + ", " + lng);
 
-                // Now you have the latitude and longitude for the address
                 LatLng geocodedLocation = new LatLng(lat, lng);
                 // Add the marker for the geocoded location
                 mMap.clear();  // Clear previous markers
@@ -394,9 +356,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(geocodedLocation, 15));
 
-
-
-                // Optionally, you can call drawRouteFromCurrentLocation() here if needed
                 drawRouteFromCurrentLocation(lat, lng);
             } else {
                 Log.e("Geocoder", "Address not found: " + address);  // Log error if not found
@@ -408,6 +367,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Toast.makeText(this, "Geocoding failed", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void drawRouteFromCurrentLocation(double destinationLat, double destinationLon) {
         // Check if permission to access fine location is granted
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -425,7 +385,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Log the current location for debugging
                 Log.d("Current Location", "Lat: " + currentLocation.latitude + ", Lng: " + currentLocation.longitude);
 
-                // Add a marker on the current location (default red marker)
+                // Add a marker on the current location
                 mMap.addMarker(new MarkerOptions()
                         .position(currentLocation)
                         .title("Your Current Location"));
@@ -437,11 +397,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Build the GraphHopper API URL to request a walking route
                 String url = "https://graphhopper.com/api/1/route?point=" + location.getLatitude() + "," + location.getLongitude() +
                         "&point=" + destinationLat + "," + destinationLon +
-                        "&type=json&vehicle=foot&key=8d7f64ec-867f-4134-858d-cbc5a09ef9dc";// Replace with your GraphHopper API Key
+                        "&type=json&vehicle=foot&key=8d7f64ec-867f-4134-858d-cbc5a09ef9dc";
 
                 LatLng newLocation = new LatLng(destinationLat, destinationLon);
 
-                // Make HTTP request to the GraphHopper Directions API using Volley
+                // HTTP request to the GraphHopper
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                         new Response.Listener<String>() {
                             @Override
@@ -463,15 +423,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     PolylineOptions polylineOptions = new PolylineOptions()
                                             .addAll(decodedPath)  // Add decoded LatLng points to polyline
                                             .width(5)
-                                            .color(getResources().getColor(R.color.colorPrimary));// Customize polyline color
-
+                                            .color(getResources().getColor(R.color.colorPrimary));
 
                                     // Add the polyline to the map
                                     mMap.addPolyline(polylineOptions);
 
-
-
-                                    // Optionally, zoom the map to fit the polyline
+                                    //  zoom the map to fit the polyline
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                                     builder.include(currentLocation);  // Include current location
                                     builder.include(new LatLng(destinationLat, destinationLon));  // Include destination

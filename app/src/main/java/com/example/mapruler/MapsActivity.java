@@ -39,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.auth.User;
 import com.google.maps.android.SphericalUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -232,13 +233,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onDataChange(DataSnapshot dataSnapshot) {
                 routesList.clear();  // Clear the previous data
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String name = snapshot.child("name").getValue(String.class);
-                    String address = snapshot.child("address").getValue(String.class);
-                    double latitude = snapshot.child("latitude").getValue(Double.class);
-                    double longitude = snapshot.child("longitude").getValue(Double.class);
+                    if(snapshot.child("uid").getValue(String.class).equals(UserData.getInstance().getUid())) {
+                        String name = snapshot.child("name").getValue(String.class);
+                        String address = snapshot.child("address").getValue(String.class);
+                        double latitude = snapshot.child("latitude").getValue(Double.class);
+                        double longitude = snapshot.child("longitude").getValue(Double.class);
 
-                    // Add the route to the list
-                    routesList.add(new Route(name, address));
+                        // Add the route to the list
+                        routesList.add(new Route(RouteType.TEST_ROUTE, name, address));
+                    }
                 }
 
                 // Notify the adapter that data has been updated
@@ -299,12 +302,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         newRouteRef.child("address").setValue(address);
         newRouteRef.child("latitude").setValue(latitude);
         newRouteRef.child("longitude").setValue(longitude);
+        newRouteRef.child("uid").setValue(UserData.getInstance().getUid());
 
         // Show a toast message to confirm the route was added
         Toast.makeText(MapsActivity.this, "Route added to Firebase", Toast.LENGTH_SHORT).show();
 
-        // update the ListView : this currently crashes the app
-        //routesList.add(new Route(name, address));
+        // update the ListView
+        routesList.add(new Route(RouteType.TEST_ROUTE, name, address));
+        routesAdapter.notifyDataSetChanged();
     }
 
     private void searchLocation(String query) {

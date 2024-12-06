@@ -62,6 +62,7 @@ public class loginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // Sign-in successful, navigate to MapsActivity
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                UserData.getInstance().setFirebaseUser(user);
                                 if (user != null) {
                                     Intent intent = new Intent(loginActivity.this, MapsActivity.class);
                                     startActivity(intent);
@@ -95,6 +96,7 @@ public class loginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // Sign-up successful, navigate to MapsActivity
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                UserData.getInstance().setFirebaseUser(user);
                                 if (user != null) {
                                     Intent intent = new Intent(loginActivity.this, MapsActivity.class);
                                     startActivity(intent);

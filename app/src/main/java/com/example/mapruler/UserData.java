@@ -11,7 +11,7 @@ public class UserData {
 
     private static UserData userData = null;
 
-    private FirebaseUser firebaseUser = null;
+    private String uid;
 
     private UserData(){
 
@@ -25,12 +25,12 @@ public class UserData {
     }
 
     public void setFirebaseUser(FirebaseUser firebaseUser){
-        this.firebaseUser = firebaseUser;
+        this.uid = firebaseUser.getUid();
     }
 
     public String getUid(){
-        if(firebaseUser != null){
-            return firebaseUser.getUid();
+        if(this.uid != null){
+            return this.uid;
         }
 
         return null;

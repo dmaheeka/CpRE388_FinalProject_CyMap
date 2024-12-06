@@ -261,6 +261,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void fetchLocationData(String locationId) {
+        //tim and make lowercase
+        locationId = locationId.toLowerCase().trim();
+        // Get a reference to the Firestore database
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("locations")
                 .document(locationId)

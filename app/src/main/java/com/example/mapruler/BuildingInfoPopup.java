@@ -4,6 +4,7 @@ import androidx.fragment.app.DialogFragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,12 +51,23 @@ public class BuildingInfoPopup extends DialogFragment {
             buildingNameTextView.setText(buildingName);
 
             // Format the business hours array into a single string
+            // Format the business hours array into a single string
             StringBuilder hoursString = new StringBuilder();
             if (businessHours != null) {
                 for (String hour : businessHours) {
-                    hoursString.append(hour).append("\n");
+                    // Split only by the first colon (":") to separate day and time
+                    String[] parts = hour.split(":", 2);
+                    if (parts.length == 2) {
+                        String day = parts[0].trim();
+                        Log.d(day,"Day: " + day);
+                        String times = parts[1].trim();
+                        Log.d(times,"Times: " + times);
+
+                        hoursString.append(String.format("%-15s %s\n", day + ": " , times));
+                    }
                 }
             }
+
             buildingInfoTextView.setText(hoursString.toString());
         } else {
             // Handle the case where arguments are missing

@@ -56,8 +56,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView stepsTextView;
     private ArrayList<Route> routesList;
     private ArrayAdapter<Route> routesAdapter;
-    private EditText searchBar;  // Search bar for manual location search
+    private EditText searchBar;// Search bar for manual location search
+    private EditText buildingsearchbar;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         // Initialize the search bar
-        searchBar = findViewById(R.id.locationEditText); // Make sure this ID matches the XML
+        searchBar = findViewById(R.id.locationEditText);
 
         // Set up the search button functionality
         findViewById(R.id.findDistanceButton).setOnClickListener(v -> {
@@ -130,7 +132,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Please enter an address to search", Toast.LENGTH_SHORT).show();
             }
         });
+
+        buildingsearchbar = findViewById(R.id.buildingEditText);
+
+        // set up searchbar for building info
+        findViewById(R.id.findBuildingButton).setOnClickListener(v -> {
+            String query = buildingsearchbar.getText().toString().trim();
+            if (!query.isEmpty()) {
+                // Search for the location without adding it to Firebase
+                fetchLocationData(query);
+            } else {
+                // If the search bar is empty, show a toast message
+                Toast.makeText(MapsActivity.this, "Please enter a valid building name", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
     @SuppressLint("PotentialBehaviorOverride")
     @Override
@@ -262,13 +279,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnFailureListener(e -> {
                     Toast.makeText(MapsActivity.this, "Error fetching location data", Toast.LENGTH_SHORT).show();
                 });
+        buildingsearchbar.setText("");
     }
 
     private void fetchRouteDataFromFirebase(Route route) {
         // Combine name and address to form a full address
         String address = route.getName() + " " + route.getAddress();
         geocodeAddress(address);// Call geocodeAddress() to get coordinates
-        fetchLocationData(route.getName());
+        //fetchLocationData(route.getName());
 
     }
     private void addRouteToDatabase(String name, String address, double latitude, double longitude) {
@@ -294,7 +312,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geocodeAddress(query);
 
         //set the building info from the database
-        fetchLocationData(query);
+       // fetchLocationData(query);
 
         // Clear the search bar
         searchBar.setText("");

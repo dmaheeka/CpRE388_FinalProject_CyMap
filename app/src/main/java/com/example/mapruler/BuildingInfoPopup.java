@@ -63,7 +63,7 @@ public class BuildingInfoPopup extends DialogFragment {
                         String times = parts[1].trim();
                         Log.d(times,"Times: " + times);
 
-                        hoursString.append(String.format("%-15s %s\n", day + ": " , times));
+                        hoursString.append(String.format("%-10s %s\n", day + ":" , times));
                     }
                 }
             }

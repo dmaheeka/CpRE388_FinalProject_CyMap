@@ -27,7 +27,7 @@
         android:layout_height="100dp"
         android:orientation="horizontal"
         android:background="@android:color/white"
-        android:layout_above="@+id/inputLayout"
+        android:layout_above="@+id/StartInputLayout"
         android:padding="8dp">
 
         <ListView
@@ -48,11 +48,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:text="Add Route" />
+        android:text="Save Route" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/inputLayout"
+        android:id="@+id/StartInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@+id/destInputLayout"
+        android:background="@android:color/white"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/startLocationEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Current Location"
+            android:textColor="@color/black"
+            android:inputType="text"
+            android:cursorVisible="true"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/destInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -64,7 +87,7 @@
             android:id="@+id/locationEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Enter a location..."
+            android:hint="Enter a Destination..."
             android:textColor="@color/black"
             android:inputType="text"
             android:cursorVisible="true"
@@ -76,7 +99,7 @@
             android:id="@+id/findDistanceButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Find Distance" />
+            android:text="GO!" />
 
     </LinearLayout>
     <TextView

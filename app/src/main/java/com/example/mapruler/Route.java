@@ -6,6 +6,7 @@ public class Route {
     private String address;
     private double latitude;
     private double longitude;
+    private Coordinate[] coordinates;
 
     // Constructor
     public Route(RouteType routeType, String name, String address) {
@@ -37,6 +38,10 @@ public class Route {
 
     public String getAddress() {
         return address;
+    }
+
+    public RouteType getRouteType() {
+        return routeType;
     }
 
 

@@ -4,12 +4,13 @@
 android:orientation="vertical"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
+android:background="#FFD700"
 android:padding="16dp">
 
     <!-- TextView for building name -->
     <TextView
         android:id="@+id/buildingNameTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:text="Building Name"
         android:textStyle="bold"

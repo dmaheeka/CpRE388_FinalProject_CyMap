@@ -10,9 +10,8 @@ android:padding="16dp">
     <!-- TextView for building name -->
     <TextView
         android:id="@+id/buildingNameTextView"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:text="Building Name"
         android:textStyle="bold"
         android:textAlignment="center"
         android:textSize="20sp"
@@ -22,9 +21,8 @@ android:padding="16dp">
     <!-- TextView for building information -->
     <TextView
         android:id="@+id/buildingInfoTextView"
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:text="Building Info"
         android:textSize="20sp"
         android:layout_marginTop="20dp"
         android:textColor="#000000" />
@@ -33,5 +31,6 @@ android:padding="16dp">
     android:id="@+id/closeButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:text="Close" />
 </LinearLayout>

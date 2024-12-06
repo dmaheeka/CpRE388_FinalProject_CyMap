@@ -6,11 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MapsActivity">
 
-    <!-- Map Fragment for displaying the map -->
-
-    <!-- ListView for displaying saved routes -->
-
-    <!-- Input layout for location and Find Distance button -->
 
     <fragment
         android:id="@+id/map"
@@ -70,7 +65,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Enter a location..."
+            android:textColor="@color/black"
             android:inputType="text"
+            android:cursorVisible="true"
             android:imeOptions="actionSearch"
             android:maxLines="1"
             android:layout_weight="1" />
@@ -80,30 +77,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Find Distance" />
+
     </LinearLayout>
-
-    <!-- Building Info Section: TextViews to display the building name and info -->
-    <LinearLayout
-        android:id="@+id/buildingInfoLayout"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:padding="16dp"
-        android:visibility="gone"
-        android:textColor="#000000"
-        android:background="@android:color/white"/>
-
-
     <TextView
         android:id="@+id/stepsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="100dp"
         android:textSize="20sp" />
 
+    <!-- Building Info Section: TextViews to display the building name and info -->
+    <LinearLayout
+        android:id="@+id/buildingInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:padding="8dp">
+
+    <EditText
+        android:id="@+id/buildingEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter a location..."
+        android:inputType="text"
+        android:cursorVisible="true"
+        android:textColor="@color/white"
+        android:imeOptions="actionSearch"
+        android:maxLines="1"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/findBuildingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="search" />
+
+    </LinearLayout>
 
 
 </RelativeLayout>

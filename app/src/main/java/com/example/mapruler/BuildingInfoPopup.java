@@ -1,3 +1,6 @@
+/**
+ * Class that collects building data from Firebase and displays it in a popup window.
+ */
 package com.example.mapruler;
 
 import androidx.fragment.app.DialogFragment;

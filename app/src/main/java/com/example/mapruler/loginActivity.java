@@ -1,3 +1,6 @@
+/**
+ * Login activity for the app. Calls Firebase Auth to authenticate the user to sign in or create a new user.
+ */
 package com.example.mapruler;
 
 import android.content.Intent;

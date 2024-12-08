@@ -107,8 +107,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="110dp"
         android:textSize="20sp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="60dp"
+        android:fadeScrollbars="false"
+        android:layoutDirection="ltr"
+        android:scrollbarThumbVertical="@drawable/custom_scrollbar_thumb"
+        android:scrollbars="vertical">
+
+
+    <TextView
+        android:id="@+id/directionsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+    </ScrollView>
 
     <!-- Building Info Section: TextViews to display the building name and info -->
     <LinearLayout
@@ -131,6 +148,7 @@
         android:imeOptions="actionSearch"
         android:maxLines="1"
         android:layout_weight="1" />
+
 
     <Button
         android:id="@+id/findBuildingButton"

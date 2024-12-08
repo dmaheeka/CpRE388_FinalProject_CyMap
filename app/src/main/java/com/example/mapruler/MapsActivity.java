@@ -1,3 +1,6 @@
+/**
+ * Main activity for the map.
+ */
 package com.example.mapruler;
 
 import android.Manifest;
@@ -39,7 +42,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.auth.User;
 import com.google.maps.android.SphericalUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,10 +57,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private ListView routesListView;
     private TextView stepsTextView;
+    private TextView directionsTextView;
     private ArrayList<Route> routesList;
     private ArrayAdapter<Route> routesAdapter;
     private EditText searchBar;// Search bar for manual location search
-    private EditText buildingsearchbar;
+    private EditText buildingSearchBar;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -70,6 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         routesListView = findViewById(R.id.routesListView);
         routesList = new ArrayList<>();
         stepsTextView = findViewById(R.id.stepsTextView);
+        directionsTextView = findViewById(R.id.directionsTextView);
 
         // Set up the adapter for the ListView
         routesAdapter = new ArrayAdapter<Route>(this, android.R.layout.simple_list_item_1, routesList) {
@@ -134,11 +138,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        buildingsearchbar = findViewById(R.id.buildingEditText);
+        buildingSearchBar = findViewById(R.id.buildingEditText);
 
         // set up searchbar for building info
         findViewById(R.id.findBuildingButton).setOnClickListener(v -> {
-            String query = buildingsearchbar.getText().toString().trim();
+            String query = buildingSearchBar.getText().toString().trim();
             if (!query.isEmpty()) {
                 // Search for the location without adding it to Firebase
                 fetchLocationData(query);
@@ -285,7 +289,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnFailureListener(e -> {
                     Toast.makeText(MapsActivity.this, "Error fetching location data", Toast.LENGTH_SHORT).show();
                 });
-        buildingsearchbar.setText("");
+        buildingSearchBar.setText("");
     }
 
     private void fetchRouteDataFromFirebase(Route route) {
@@ -442,6 +446,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     // Build LatLngBounds and move the camera to fit the route
                                     LatLngBounds bounds = builder.build();
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 250));
+
+                                    //turn-by-turn directions
+                                    JSONArray instructionsArray = path.getJSONArray("instructions");
+                                    Log.d("Instructions", instructionsArray.toString());
+                                    StringBuilder directions = new StringBuilder();
+
+                                    for (int i = 0; i < instructionsArray.length(); i++) {
+                                        JSONObject instruction = instructionsArray.getJSONObject(i);
+                                        String text = instruction.getString("text");
+                                        double distanceToNext = instruction.getDouble("distance");
+
+                                        String distanceToNextFormatted = text + " in " + Math.round(distanceToNext) + " m";
+                                        directions.append(i + 1).append(". ").append(distanceToNextFormatted).append("\n");
+                                    }
+
+                                    directionsTextView.setText(directions.toString());
+                                    Log.d("Directions", directions.toString());
 
                                 } catch (Exception e) {
                                     e.printStackTrace();

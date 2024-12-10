@@ -46,6 +46,7 @@ import com.google.maps.android.SphericalUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +61,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView directionsTextView;
     private ArrayList<Route> routesList;
     private ArrayAdapter<Route> routesAdapter;
-    private EditText searchBar;// Search bar for manual location search
+    private EditText startSearchBar;
+    private EditText destSearchBar;
     private EditText buildingSearchBar;
+
+    private Route currRoute;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -93,15 +97,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Button to add route
         Button addRouteButton = findViewById(R.id.addRouteButton);
         addRouteButton.setOnClickListener(v -> {
-            // Capture the address from the search bar
-            String query = searchBar.getText().toString().trim();
 
-            if (!query.isEmpty()) {
-                // If search bar is not empty, geocode the address and add the route
-                geocodeAndAddRoute(query);
+            if (currRoute != null) {
+                addRouteToDatabase(currRoute);
             } else {
-                // If the search bar is empty, show a toast message
-                Toast.makeText(MapsActivity.this, "Please enter an address", Toast.LENGTH_SHORT).show();
+                // If no active route, show a toast message
+                Toast.makeText(MapsActivity.this, "No current route to save", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -112,7 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         routesListView.setOnItemClickListener((parent, view, position, id) -> {
             Route selectedRoute = routesList.get(position);
             // When a route is clicked, use the selected route's name and address
-            fetchRouteDataFromFirebase(selectedRoute);
+            applyRoute(selectedRoute);
         });
 
         // Initialize the FusedLocationProviderClient
@@ -124,17 +125,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         // Initialize the search bar
-        searchBar = findViewById(R.id.locationEditText);
+        startSearchBar = findViewById(R.id.startLocationEditText);
+        destSearchBar = findViewById(R.id.destLocationEditText);
+
 
         // Set up the search button functionality
         findViewById(R.id.findDistanceButton).setOnClickListener(v -> {
-            String query = searchBar.getText().toString().trim();
-            if (!query.isEmpty()) {
+            String startQuery = startSearchBar.getText().toString().trim().toLowerCase();
+            String destQuery = destSearchBar.getText().toString().trim().toLowerCase();
+            if (!destQuery.isEmpty()) {
                 // Search for the location without adding it to Firebase
-                searchLocation(query);
+                searchRoute(startQuery, destQuery);
             } else {
                 // If the search bar is empty, show a toast message
-                Toast.makeText(MapsActivity.this, "Please enter an address to search", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, "Please enter a destination to search", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -181,35 +185,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_mine));
 
         // Move camera to the current location
-        getLastKnownLocation();
-    }
-
-
-    private void geocodeAndAddRoute(String address) {
-        Geocoder geocoder = new Geocoder(this);
-        try {
-            // Geocode the address entered by the user
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-
-            if (addresses != null && !addresses.isEmpty()) {
-                android.location.Address location = addresses.get(0);
-                double lat = location.getLatitude();
-                double lng = location.getLongitude();
-
-                // Now add this route to Firebase
-                addRouteToDatabase(address, address, lat, lng);  // Using the same address for name and address fields
-
-            } else {
-                Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Geocoding failed", Toast.LENGTH_SHORT).show();
-        }
+        panToCurrentLocation();
     }
 
     // Get last known location or request it if not available
-    private void getLastKnownLocation() {
+    private void panToCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -237,17 +217,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onDataChange(DataSnapshot dataSnapshot) {
                 routesList.clear();  // Clear the previous data
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(snapshot.child("uid").getValue(String.class).equals(UserData.getInstance().getUid())) {
-                        String name = snapshot.child("name").getValue(String.class);
-                        String address = snapshot.child("address").getValue(String.class);
-                        double latitude = snapshot.child("latitude").getValue(Double.class);
-                        double longitude = snapshot.child("longitude").getValue(Double.class);
+                    try {
+                        if(snapshot.child("uid").getValue(String.class).equals(UserData.getInstance().getUid())) {
+                            // Add the route to the list
+                            DataSnapshot routeObj = snapshot.child("routeObj");
 
-                        // Add the route to the list
-                        routesList.add(new Route(RouteType.TEST_ROUTE, name, address));
+                            ArrayList<LatLng> coordinates = new ArrayList<LatLng>();
+                            for (DataSnapshot coordinate : routeObj.child("coordinates").getChildren()){
+                                coordinates.add(new LatLng(coordinate.child("latitude").getValue(Double.class), coordinate.child("longitude").getValue(Double.class)));
+                            }
+
+                            ArrayList<String> addresses = new ArrayList<String>();
+                            for (DataSnapshot address : routeObj.child("addresses").getChildren()){
+                                addresses.add(address.getValue(String.class));
+                            }
+
+                            boolean fromCurrentLocation = routeObj.child("fromCurrentLocation").getValue(Boolean.class);
+
+                            String name = routeObj.child("name").getValue(String.class);
+
+                            Route route = new Route(name, coordinates, addresses, fromCurrentLocation);
+
+                            routesList.add(route);
+
+                        }
+                    } catch (Exception e) {
+                        //skip invalid entry
+                        Log.d("Fetch Exception: ", e.getMessage());
                     }
-                }
 
+                }
                 // Notify the adapter that data has been updated
                 routesAdapter.notifyDataSetChanged();
             }
@@ -292,46 +291,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         buildingSearchBar.setText("");
     }
 
-    private void fetchRouteDataFromFirebase(Route route) {
-        // Combine name and address to form a full address
-        String address = route.getName() + " " + route.getAddress();
-        geocodeAddress(address);// Call geocodeAddress() to get coordinates
-        //fetchLocationData(route.getName());
-
-    }
-    private void addRouteToDatabase(String name, String address, double latitude, double longitude) {
-      //need to switch to firebase reference instead of realtime
+    private void addRouteToDatabase(Route route) {
+        //need to switch to firebase reference instead of realtime
         DatabaseReference routesRef = FirebaseDatabase.getInstance().getReference("routes");
 
         // Create a new entry in the "routes" collection
         DatabaseReference newRouteRef = routesRef.push();
-        newRouteRef.child("name").setValue(name);
-        newRouteRef.child("address").setValue(address);
-        newRouteRef.child("latitude").setValue(latitude);
-        newRouteRef.child("longitude").setValue(longitude);
         newRouteRef.child("uid").setValue(UserData.getInstance().getUid());
+        newRouteRef.child("routeObj").setValue(route);
 
         // Show a toast message to confirm the route was added
         Toast.makeText(MapsActivity.this, "Route added to Firebase", Toast.LENGTH_SHORT).show();
 
         // update the ListView
-        routesList.add(new Route(RouteType.TEST_ROUTE, name, address));
+        routesList.add(route);
         routesAdapter.notifyDataSetChanged();
     }
 
-    private void searchLocation(String query) {
+    private void searchRoute(String startQuery, String destQuery) {
         // Geocode the entered search query (manual address search)
-        geocodeAddress(query);
+        LatLng startCoord = geocodeAddress(startQuery);
+        LatLng destCoord = geocodeAddress(destQuery);
 
-        //set the building info from the database
-       // fetchLocationData(query);
+        // Clear the search bars
+        startSearchBar.setText("");
+        destSearchBar.setText("");
 
-        // Clear the search bar
-        searchBar.setText("");
+        boolean fromCurrLoc = true;
+        if(!startQuery.isEmpty()){
+            fromCurrLoc = false;
+        }
 
+        ArrayList<LatLng> coords = new ArrayList<LatLng>();
+        ArrayList<String> addresses = new ArrayList<String>();
+        if(!fromCurrLoc){
+            coords.add(new LatLng(startCoord.latitude, startCoord.longitude));
+            addresses.add(startQuery);
+        }
+
+        coords.add(new LatLng(destCoord.latitude, destCoord.longitude));
+        addresses.add(destQuery);
+        //TODO: add multi-stop functionality, indexing already implemented
+
+        String name;
+        if (fromCurrLoc) {
+            name = "Curr Loc to " + destQuery;
+        } else {
+            name = startQuery + " to " + destQuery;
+        }
+        Route newRoute = new Route(name, coords, addresses, fromCurrLoc);
+        applyRoute(newRoute);
     }
 
-    private void geocodeAddress(String address) {
+    private LatLng geocodeAddress(String address) {
         // Add Ames, Iowa to the address so that the user doesn't have to
         address += " ames iowa";
 
@@ -350,13 +362,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("Geocoder", "Geocoded location: " + lat + ", " + lng);
 
                 LatLng geocodedLocation = new LatLng(lat, lng);
-                // Add the marker for the geocoded location
-                mMap.clear();  // Clear previous markers
-                mMap.addMarker(new MarkerOptions().position(geocodedLocation).title(address));
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(geocodedLocation, 15));
+                return geocodedLocation;
 
-                drawRouteFromCurrentLocation(lat, lng);
             } else {
                 Log.e("Geocoder", "Address not found: " + address);  // Log error if not found
                 Toast.makeText(this, "Address not found", Toast.LENGTH_SHORT).show();
@@ -366,125 +374,141 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e("Geocoder", "Geocoding failed", e);  // Log the exception for debugging
             Toast.makeText(this, "Geocoding failed", Toast.LENGTH_SHORT).show();
         }
+
+        return null;
     }
 
-    private void drawRouteFromCurrentLocation(double destinationLat, double destinationLon) {
-        // Check if permission to access fine location is granted
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // If not, request the permission (handle this in your permissions callback)
-            return;
+    private String formatRouteString(Route route){
+        String ret = "route?point=";
+        ArrayList<LatLng> coords = route.getCoordinates();
+        ret = ret + coords.get(0).latitude + "," + coords.get(0).longitude;
+        for (int i = 1; i < coords.size(); i++){
+            ret = ret + "&point=" + coords.get(i).latitude + "," + coords.get(i).longitude;
         }
+        return ret;
+    }
 
-        // Get current location using FusedLocationProviderClient
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-            if (location != null) {
-                // Get current location coordinates
-                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-
-                // Log the current location for debugging
-                Log.d("Current Location", "Lat: " + currentLocation.latitude + ", Lng: " + currentLocation.longitude);
-
-                // Add a marker on the current location
-                mMap.addMarker(new MarkerOptions()
-                        .position(currentLocation)
-                        .title("Your Current Location"));
-
-
-                // Move the camera to the current location
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));  // Zoom to current location
-
-                // Build the GraphHopper API URL to request a walking route
-                String url = "https://graphhopper.com/api/1/route?point=" + location.getLatitude() + "," + location.getLongitude() +
-                        "&point=" + destinationLat + "," + destinationLon +
-                        "&type=json&vehicle=foot&key=8d7f64ec-867f-4134-858d-cbc5a09ef9dc";
-
-                LatLng newLocation = new LatLng(destinationLat, destinationLon);
-
-                // HTTP request to the GraphHopper
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                        new Response.Listener<String>() {
-                            @SuppressLint("SetTextI18n")
-                            @Override
-                            public void onResponse(String response) {
-                                try {
-                                    // Parse the JSON response to get the encoded polyline
-                                    JSONObject jsonResponse = new JSONObject(response);
-                                    JSONArray paths = jsonResponse.getJSONArray("paths");
-                                    JSONObject path = paths.getJSONObject(0);
-                                    String encodedPolyline = path.getString("points");
-
-                                    // Decode the polyline into LatLng points using PolylineUtil.decodePolyline
-                                    List<LatLng> decodedPath = PolylineUtil.decodePolyline(encodedPolyline);
-                                    Log.d("Polyline", "Decoded path size: " + decodedPath.size());
-
-                                    // Create PolylineOptions and add the decoded path
-                                    PolylineOptions polylineOptions = new PolylineOptions()
-                                            .addAll(decodedPath)  // Add decoded LatLng points to polyline
-                                            .width(5)
-                                            .color(getResources().getColor(R.color.colorPrimary));
-
-                                    // Add the polyline to the map
-                                    mMap.addPolyline(polylineOptions);
-
-                                    //  zoom the map to fit the polyline
-                                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                                    builder.include(currentLocation);  // Include current location
-                                    builder.include(new LatLng(destinationLat, destinationLon));  // Include destination
-
-                                    // Include all points in the polyline
-                                    for (LatLng latLng : decodedPath) {
-                                        builder.include(latLng);
-                                    }
-                                    //calculate the distance in meters, steps, and ETA
-                                    double distance = SphericalUtil.computeDistanceBetween(currentLocation, newLocation);
-                                    @SuppressLint("DefaultLocale") String distanceFormatted = String.format("%.2f",distance);
-                                    stepsTextView.setText("distance: " + distanceFormatted +
-                                                          " meters\n" + "steps: " + (int)(distance / .762)  +
-                                                          "\nMinutes: " + Math.round(distance / 0.95 /60));
-
-                                    // Build LatLngBounds and move the camera to fit the route
-                                    LatLngBounds bounds = builder.build();
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 250));
-
-                                    //turn-by-turn directions
-                                    JSONArray instructionsArray = path.getJSONArray("instructions");
-                                    Log.d("Instructions", instructionsArray.toString());
-                                    StringBuilder directions = new StringBuilder();
-
-                                    for (int i = 0; i < instructionsArray.length(); i++) {
-                                        JSONObject instruction = instructionsArray.getJSONObject(i);
-                                        String text = instruction.getString("text");
-                                        double distanceToNext = instruction.getDouble("distance");
-
-                                        String distanceToNextFormatted = text + " in " + Math.round(distanceToNext) + " m";
-                                        directions.append(i + 1).append(". ").append(distanceToNextFormatted).append("\n");
-                                    }
-
-                                    directionsTextView.setText(directions.toString());
-                                    Log.d("Directions", directions.toString());
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    Log.e("RouteError", "Error parsing route response: " + e.getMessage());
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                error.printStackTrace();
-                                Log.e("VolleyError", "Error fetching route: " + error.getMessage());
-                            }
-                        });
-
-                // Add the request to the Volley RequestQueue
-                Volley.newRequestQueue(MapsActivity.this).add(stringRequest);
-            } else {
-                // Handle the case where current location is null
-                Toast.makeText(MapsActivity.this, "Current location is unavailable", Toast.LENGTH_SHORT).show();
-                Log.e("LocationError", "Current location is null.");
+    private void applyRoute(Route route) {
+        currRoute = route;
+        if(route.fromCurrentLocation){
+            // Check if permission to access fine location is granted
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // If not, request the permission (handle this in your permissions callback)
+                return;
             }
-        });
+
+            // Get current location using FusedLocationProviderClient
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    // Get current location coordinates
+                    LatLng startLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    // Log the current location for debugging
+                    Log.d("Current Location", "Lat: " + startLocation.latitude + ", Lng: " + startLocation.longitude);
+
+                    Route newRoute = route.addCurrentLocation(startLocation);
+                    drawRoute(newRoute);
+
+                } else {
+                    // Handle the case where current location is null
+                    Toast.makeText(MapsActivity.this, "Current location is unavailable", Toast.LENGTH_SHORT).show();
+                    Log.e("LocationError", "Current location is null.");
+                }
+            });
+        } else {
+            drawRoute(route);
+        }
+    }
+
+    private void drawRoute(Route route) {
+        // Build the GraphHopper API URL to request a walking route
+        String url = "https://graphhopper.com/api/1/" + formatRouteString(route) +
+                "&type=json&vehicle=foot&key=8d7f64ec-867f-4134-858d-cbc5a09ef9dc";
+
+        // HTTP request to the GraphHopper
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // Parse the JSON response to get the encoded polyline
+                            JSONObject jsonResponse = new JSONObject(response);
+                            JSONArray paths = jsonResponse.getJSONArray("paths");
+                            JSONObject path = paths.getJSONObject(0);
+                            String encodedPolyline = path.getString("points");
+
+                            // Decode the polyline into LatLng points using PolylineUtil.decodePolyline
+                            List<LatLng> decodedPath = PolylineUtil.decodePolyline(encodedPolyline);
+                            Log.d("Polyline", "Decoded path size: " + decodedPath.size());
+
+                            // Create PolylineOptions and add the decoded path
+                            PolylineOptions polylineOptions = new PolylineOptions()
+                                    .addAll(decodedPath)  // Add decoded LatLng points to polyline
+                                    .width(5)
+                                    .color(getResources().getColor(R.color.colorPrimary));
+
+                            // Add the polyline to the map
+                            mMap.clear();  // Clear previous route
+                            mMap.addPolyline(polylineOptions);
+
+                            //  zoom the map to fit the polyline
+                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                            for(LatLng latLng : route.getCoordinates()){
+                                builder.include(latLng);
+                            }
+
+                            // add markers
+                            ArrayList<LatLng> coords = route.getCoordinates();
+                            ArrayList<String> addresses = route.getAddresses();
+                            for (int i = 0; i < route.getCoordinates().size() - 1; i++) {
+                                mMap.addMarker(new MarkerOptions().position(coords.get(i)).title(addresses.get(i)));
+                            }
+
+                            // TODO: add loop to calculate actual distance of polyline
+                            //calculate the distance in meters, steps, and ETA
+                            double distance = SphericalUtil.computeDistanceBetween(route.getCoordinates().get(0), route.getCoordinates().get(route.getCoordinates().size() - 1));
+                            @SuppressLint("DefaultLocale") String distanceFormatted = String.format("%.2f",distance);
+                            stepsTextView.setText("distance: " + distanceFormatted +
+                                    " meters\n" + "steps: " + (int)(distance / .762)  +
+                                    "\nMinutes: " + Math.round(distance / 0.95 /60));
+
+                            // Build LatLngBounds and move the camera to fit the route
+                            LatLngBounds bounds = builder.build();
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 250));
+
+                            //turn-by-turn directions
+                            JSONArray instructionsArray = path.getJSONArray("instructions");
+                            Log.d("Instructions", instructionsArray.toString());
+                            StringBuilder directions = new StringBuilder();
+
+                            for (int i = 0; i < instructionsArray.length(); i++) {
+                                JSONObject instruction = instructionsArray.getJSONObject(i);
+                                String text = instruction.getString("text");
+                                double distanceToNext = instruction.getDouble("distance");
+
+                                String distanceToNextFormatted = text + " in " + Math.round(distanceToNext) + " m";
+                                directions.append(i + 1).append(". ").append(distanceToNextFormatted).append("\n");
+                            }
+
+                            directionsTextView.setText(directions.toString());
+                            Log.d("Directions", directions.toString());
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("RouteError", "Error parsing route response: " + e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        Log.e("VolleyError", "Error fetching route: " + error.getMessage());
+                    }
+                });
+        // Add the request to the Volley RequestQueue
+        Volley.newRequestQueue(MapsActivity.this).add(stringRequest);
     }
 }

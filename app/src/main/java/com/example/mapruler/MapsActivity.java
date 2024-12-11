@@ -462,7 +462,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             // add markers
                             ArrayList<LatLng> coords = route.getCoordinates();
                             ArrayList<String> addresses = route.getAddresses();
-                            for (int i = 0; i < route.getCoordinates().size() - 1; i++) {
+                            for (int i = 0; i < route.getCoordinates().size(); i++) {
                                 mMap.addMarker(new MarkerOptions().position(coords.get(i)).title(addresses.get(i)));
                             }
 

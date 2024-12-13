@@ -68,6 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Route currRoute;
     private boolean needToAddStop = false;
+    private double distance = 0;
 
 
     @SuppressLint("MissingInflatedId")
@@ -131,28 +132,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startSearchBar = findViewById(R.id.startLocationEditText);
         destSearchBar = findViewById(R.id.destLocationEditText);
         stopSearchBar = findViewById(R.id.stopLocationEditText);
-        stopSearchBar.setVisibility(View.GONE);
+        stopSearchBar.setVisibility(View.INVISIBLE);
 
 
         findViewById(R.id.addStopButton).setOnClickListener(v -> {
-                stopSearchBar.setVisibility(View.VISIBLE);
-                String startQuery = startSearchBar.getText().toString().trim().toLowerCase();
-                String stopQuery = stopSearchBar.getText().toString().trim().toLowerCase();
-                String destQuery = destSearchBar.getText().toString().trim().toLowerCase();
-                needToAddStop = true;
-                if (!stopQuery.isEmpty()) {
-                    // Search for the location without adding it to Firebase
-
-                    searchRouteWithStop(startQuery, stopQuery, destQuery);
-                    stopSearchBar.setVisibility(View.GONE);
-                    stopSearchBar.setText("");
-                }
-                else {
-                    // If the search bar is empty, show a toast message
-                    Toast.makeText(MapsActivity.this, "Please enter a valid stop location", Toast.LENGTH_SHORT).show();
-                }
-
-                });
+            stopSearchBar.setVisibility(View.VISIBLE);
+            needToAddStop = true;
+        });
 
 
         // Set up the search button functionality
@@ -310,7 +296,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         // Retrieve hours array
                         ArrayList<String> businessHours = (ArrayList<String>) documentSnapshot.get("hours");
                         // Create and show the DialogFragment
-                         BuildingInfoPopup dialogFragment = BuildingInfoPopup.newInstance(buildingName, businessHours);
+                        BuildingInfoPopup dialogFragment = BuildingInfoPopup.newInstance(buildingName, businessHours);
                         dialogFragment.show(getSupportFragmentManager(), "LocationDetailsDialog");
                     } else {
                         Toast.makeText(MapsActivity.this, "Location not found", Toast.LENGTH_SHORT).show();
@@ -348,7 +334,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startSearchBar.setText("");
         destSearchBar.setText("");
         stopSearchBar.setText("");
-        stopSearchBar.setVisibility(View.GONE);
+        stopSearchBar.setVisibility(View.INVISIBLE);
 
         boolean fromCurrLoc = true;
         if(!startQuery.isEmpty()){
@@ -386,7 +372,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startSearchBar.setText("");
         destSearchBar.setText("");
         stopSearchBar.setText("");
-        stopSearchBar.setVisibility(View.GONE);
+        stopSearchBar.setVisibility(View.INVISIBLE);
 
         boolean fromCurrLoc = true;
         if(!startQuery.isEmpty()){
@@ -546,13 +532,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mMap.addMarker(new MarkerOptions().position(coords.get(i)).title(addresses.get(i)));
                             }
 
-                            // TODO: add loop to calculate actual distance of polyline
-                            //calculate the distance in meters, steps, and ETA
-                            double distance = SphericalUtil.computeDistanceBetween(route.getCoordinates().get(0), route.getCoordinates().get(route.getCoordinates().size() - 1));
-                            @SuppressLint("DefaultLocale") String distanceFormatted = String.format("%.2f",distance);
-                            stepsTextView.setText("distance: " + distanceFormatted +
-                                    " meters\n" + "steps: " + (int)(distance / .762)  +
-                                    "\nMinutes: " + Math.round(distance / 0.95 /60));
+                            distance = 0;
+                            for (int i = 0; i < route.getCoordinates().size()-1; i++) {
+                                //calculate the distance in meters, steps, and ETA
+                                distance += SphericalUtil.computeDistanceBetween(route.getCoordinates().get(i), route.getCoordinates().get(i+1));
+
+                                @SuppressLint("DefaultLocale") String distanceFormatted = String.format("%.2f",distance);
+                                stepsTextView.setText("distance: " + distanceFormatted +
+                                                      " meters\n" + "steps: " + (int)(distance / .762)  +
+                                                      "\nMinutes: " + Math.round(distance / 0.95 /60));
+
+                            }
+
+
 
                             // Build LatLngBounds and move the camera to fit the route
                             LatLngBounds bounds = builder.build();
@@ -568,7 +560,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 String text = instruction.getString("text");
                                 double distanceToNext = instruction.getDouble("distance");
 
-                                String distanceToNextFormatted = text + " in " + Math.round(distanceToNext) + " m";
+                                String distanceToNextFormatted;
+                                if (text.equals("Continue")) {
+                                    distanceToNextFormatted = text + " for " + Math.round(distanceToNext) + " m";
+
+                                } else {
+                                    distanceToNextFormatted = text + " in " + Math.round(distanceToNext) + " m";
+                                }
                                 directions.append(i + 1).append(". ").append(distanceToNextFormatted).append("\n");
                             }
 

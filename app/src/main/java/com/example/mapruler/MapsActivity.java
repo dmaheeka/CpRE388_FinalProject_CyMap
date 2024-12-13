@@ -5,9 +5,11 @@ package com.example.mapruler;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,15 +27,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -42,6 +50,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.maps.android.SphericalUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,11 +59,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, SensorEventListener {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
+    //sensor detection
+    private SensorManager sensorManager;
+    private Sensor rotationVectorSensor;
+    private Marker userDirectionMarker; // To show the user's direction as an arrow
+    private float currentBearing = 0f; // Store the current direction
+    private List<Marker> routeMarkers = new ArrayList<>();
+    List<Polyline> polylineList = new ArrayList<>();
 
     private ListView routesListView;
     private TextView stepsTextView;
@@ -71,6 +93,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean needToAddStop = false;
     private double distance = 0;
 
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+
+    private List<Marker> poiMarkers = new ArrayList<>();
+    private FirebaseFirestore datab;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -84,6 +112,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stepsTextView = findViewById(R.id.stepsTextView);
         directionsTextView = findViewById(R.id.directionsTextView);
 
+        //sensors:
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        rotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+
+        if (rotationVectorSensor == null) {
+            Toast.makeText(this, "Device does not have a rotation vector sensor.", Toast.LENGTH_SHORT).show();
+        }
+
+
         // Set up the adapter for the ListView
         routesAdapter = new ArrayAdapter<Route>(this, android.R.layout.simple_list_item_1, routesList) {
             @Override
@@ -95,6 +132,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return view;
             }
         };
+
+        datab = FirebaseFirestore.getInstance();  // Initialize Firestore
 
         // Set the adapter to the ListView
         routesListView.setAdapter(routesAdapter);
@@ -180,7 +219,91 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Please enter a valid building name", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        Button btnShowPOIs = findViewById(R.id.btnShowPOIs);
+        btnShowPOIs.setOnClickListener(v -> {
+            // Clear existing POI markers
+            clearPOIMarkers();
+
+            poiMarkers.clear();
+            showPOIsAlongRoute();  // Show POIs within the specified range
+        });
     }
+
+
+    private void clearPOIMarkers() {
+        for (Marker marker : poiMarkers) {
+            marker.remove(); // Remove the marker from the map
+        }
+        poiMarkers.clear(); // Clear the list
+    }
+
+    private void showPOIsAlongRoute() {
+        // Fetch the POIs from Firestore
+        datab.collection("POIs")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String name = document.getString("name");
+                            GeoPoint location = document.getGeoPoint("location"); // Get GeoPoint from Firestore
+                            String type = document.getString("type"); // Get type of POI (e.g., cafe, bus_stop)
+
+                            if (location != null) {
+                                double lat = location.getLatitude();
+                                double lng = location.getLongitude();
+                                LatLng poiLatLng = new LatLng(lat, lng);
+
+                                // Iterate through each polyline in the polylineList
+                                for (Polyline polyline : polylineList) {
+                                    List<LatLng> polylinePoints = polyline.getPoints(); // Get the points of the polyline
+
+                                    // Iterate over the points in the polyline
+                                    for (LatLng polylinePoint : polylinePoints) {
+                                        // Check if the POI is within range of this polyline point
+                                        if (isWithinRange(poiLatLng, polylinePoint)) {
+                                            // Choose the correct marker icon based on POI type
+                                            int markerIcon;
+                                            if ("cafe".equals(type)) {
+                                                markerIcon = R.drawable.ic_cafe_marker; // Cafe icon (replace with actual resource)
+                                            } else if ("bus_stop".equals(type)) {
+                                                markerIcon = R.drawable.ic_bus_stop_marker; // Bus stop icon (replace with actual resource)
+                                            } else {
+                                                markerIcon = R.drawable.ic_default_marker; // Default icon for other types
+                                            }
+
+                                            // Add marker for POI on the map
+                                            Marker marker = mMap.addMarker(new MarkerOptions()
+                                                    .position(poiLatLng)
+                                                    .title(name)
+                                                    .icon(BitmapDescriptorFactory.fromResource(markerIcon)));
+                                            // Add marker to POI markers list
+                                            poiMarkers.add(marker);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        Log.e("Firestore", "Error getting documents: ", task.getException());
+                    }
+                });
+    }
+
+
+    private boolean isWithinRange(LatLng poiLatLng, LatLng polylinePoint) {
+        double radius = 161.0;  // 0.2 miles in meters
+
+        // Calculate the distance between the polyline point and the POI
+        float[] results = new float[1];
+        Location.distanceBetween(polylinePoint.latitude, polylinePoint.longitude,
+                poiLatLng.latitude, poiLatLng.longitude,
+                results);
+
+        return results[0] <= radius;  // Return true if the distance is within 0.2 miles
+    }
+
 
 
     @SuppressLint("PotentialBehaviorOverride")
@@ -210,7 +333,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_mine));
 
         // Move camera to the current location
-        panToCurrentLocation();
+        //panToCurrentLocation();
     }
 
     // Get last known location or request it if not available
@@ -231,6 +354,90 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (rotationVectorSensor != null) {
+            sensorManager.registerListener(this, rotationVectorSensor, SensorManager.SENSOR_DELAY_UI);
+        }
+
+        // Request location updates when the activity is resumed
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationRequest = LocationRequest.create();
+            locationRequest.setInterval(10000);  // Request location every 10 seconds
+            locationRequest.setFastestInterval(5000);  // Fastest interval: 5 seconds
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    if (locationResult != null && locationResult.getLastLocation() != null) {
+                        LatLng currentLocation = new LatLng(locationResult.getLastLocation().getLatitude(),
+                                locationResult.getLastLocation().getLongitude());
+                        ensureUserDirectionMarker(currentLocation);
+                    }
+                }
+            };
+
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        }
+    }
+
+
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (rotationVectorSensor != null) {
+            sensorManager.unregisterListener(this);
+        }
+
+        // Stop location updates to save resources
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            float[] rotationMatrix = new float[9];
+            float[] orientationAngles = new float[3];
+
+            // Convert rotation vector to a rotation matrix
+            SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+
+            // Get orientation angles from the rotation matrix
+            SensorManager.getOrientation(rotationMatrix, orientationAngles);
+
+            // Convert radians to degrees
+            float bearing = (float) Math.toDegrees(orientationAngles[0]);
+
+            // Normalize the bearing to 0-360
+            if (bearing < 0) {
+                bearing += 360;
+            }
+
+            currentBearing = bearing;
+
+            if (userDirectionMarker != null) {
+                userDirectionMarker.setRotation(currentBearing); // Update arrow direction
+            }
+        }
+    }
+
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // No action needed for now
+    }
+
+
+
 
     private void fetchRoutesFromFirebase() {
         // need to switch to Firestore reference instead of realtime
@@ -334,6 +541,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void searchRoute(String startQuery, String destQuery) {
+        // Check if permission to access fine location is granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // If permission is not granted, request it
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);  // 1 is a request code
+            return; // Exit the method until permission is granted
+        }
+
         // Geocode the entered search query (manual address search)
         LatLng startCoord = geocodeAddress(startQuery);
         LatLng destCoord = geocodeAddress(destQuery);
@@ -410,6 +626,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d("coords", coords.toString());
         Route newRoute = new Route(name, coords, addresses, fromCurrLoc);
         applyRoute(newRoute);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1) {  // 1 is the request code
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                searchRoute(startSearchBar.getText().toString(), destSearchBar.getText().toString());
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Permission denied to access location", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private LatLng geocodeAddress(String address) {
@@ -491,6 +722,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void drawRoute(Route route) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // If permission is not granted, request it
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);  // 1 is the request code
+            return; // Exit the method until permission is granted
+        }
+
+        clearPOIMarkers();
+
         // Build the GraphHopper API URL to request a walking route
         String formattedRoute = formatRouteString(route);
         Log.d("Formatted Route", formattedRoute);
@@ -516,15 +757,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             List<LatLng> decodedPath = PolylineUtil.decodePolyline(encodedPolyline);
                             Log.d("Polyline", "Decoded path size: " + decodedPath.size());
 
+
+                            // Clear all polylines
+                            for (Polyline polyline : polylineList) {
+                                polyline.remove();  // Remove each polyline from the map
+                            }
+
+                            // Clear the list after removing all polylines
+                            polylineList.clear();
+
+
                             // Create PolylineOptions and add the decoded path
                             PolylineOptions polylineOptions = new PolylineOptions()
                                     .addAll(decodedPath)  // Add decoded LatLng points to polyline
                                     .width(5)
                                     .color(getResources().getColor(R.color.colorPrimary));
 
-                            mMap.clear();  // Clear previous route
-                            mMap.addPolyline(polylineOptions);
+                            //mMap.clear();  // Clear previous route
+                            Polyline polyline = mMap.addPolyline(polylineOptions);
+                            polylineList.add(polyline);
                             needToAddStop = false;
+
+                            for (Marker marker : routeMarkers) {
+                                marker.remove();
+                            }
+                            routeMarkers.clear();
 
 
                             //  zoom the map to fit the polyline
@@ -537,8 +794,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             ArrayList<LatLng> coords = route.getCoordinates();
                             ArrayList<String> addresses = route.getAddresses();
                             for (int i = 0; i < route.getCoordinates().size(); i++) {
-                                mMap.addMarker(new MarkerOptions().position(coords.get(i)).title(addresses.get(i)));
+                                Marker marker =mMap.addMarker(new MarkerOptions().position(coords.get(i)).title(addresses.get(i)));
+                                routeMarkers.add(marker);
                             }
+
+                            // **Add or update userDirectionMarker**
+                            Log.d("Location", "Before getting location");
+                            fusedLocationClient.getLastLocation().addOnSuccessListener(MapsActivity.this, location -> {
+                                if (location != null) {
+                                    LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                    Log.d("Location", "Location found: " + currentLatLng.toString());
+
+                                    // Only add the direction marker if it doesn't exist
+                                    if (userDirectionMarker == null) {
+                                        Log.d("Marker", "Adding new user direction marker");
+                                        userDirectionMarker = mMap.addMarker(new MarkerOptions()
+                                                .position(currentLatLng)
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_icon))  // Use your arrow icon
+                                                .anchor(0.5f, 0.5f)
+                                                .flat(true));  // Flat marker for rotation
+
+                                        Log.d("MarkerDetails", "New marker added at position: " + currentLatLng);
+                                    } else {
+                                        // Update position and bearing of the existing marker
+                                        Log.d("Marker", "Updating user direction marker");
+                                        userDirectionMarker.setPosition(currentLatLng);
+                                        userDirectionMarker.setRotation(currentBearing);
+                                    }
+
+                                    // Optionally, move camera to current location
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+                                } else {
+                                    Log.d("Location", "Location is null");
+                                }
+                            });
 
                             distance = 0;
                             for (int i = 0; i < route.getCoordinates().size()-1; i++) {
@@ -596,5 +885,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
         // Add the request to the Volley RequestQueue
         Volley.newRequestQueue(MapsActivity.this).add(stringRequest);
+    }
+
+    // Function to ensure user direction marker exists or update it
+    private void ensureUserDirectionMarker(LatLng currentLocation) {
+        // Only add the direction marker if it doesn't exist
+        if (userDirectionMarker == null) {
+            Log.d("Marker", "Adding new user direction marker");
+            userDirectionMarker = mMap.addMarker(new MarkerOptions()
+                    .position(currentLocation)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow_icon))  // Use your arrow icon
+                    .anchor(0.5f, 0.5f)
+                    .flat(true));  // Flat marker for rotation
+
+            Log.d("MarkerDetails", "New marker added at position: " + currentLocation);
+        } else {
+            // Update position and bearing of the existing marker
+            Log.d("Marker", "Updating user direction marker");
+            userDirectionMarker.setPosition(currentLocation);
+            userDirectionMarker.setRotation(currentBearing);  // Ensure currentBearing is updated properly
+        }
+
+        // Optionally, move camera to current location
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
     }
 }

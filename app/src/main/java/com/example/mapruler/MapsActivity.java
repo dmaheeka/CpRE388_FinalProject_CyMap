@@ -6,6 +6,7 @@ package com.example.mapruler;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -99,6 +100,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<Marker> poiMarkers = new ArrayList<>();
     private FirebaseFirestore datab;
 
+    private Button logoutButton;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -137,6 +140,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Set the adapter to the ListView
         routesListView.setAdapter(routesAdapter);
+        // Initialize the logout button
+        logoutButton = findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(v -> {
+            UserData.getInstance().signOut();
+            Intent intent = new Intent (MapsActivity.this, loginActivity.class);
+            startActivity(intent);
+            finish();
+        });
 
         // Button to add route
         Button addRouteButton = findViewById(R.id.addRouteButton);

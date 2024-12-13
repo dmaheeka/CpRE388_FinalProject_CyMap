@@ -35,4 +35,8 @@ public class UserData {
 
         return null;
     }
+    public void signOut(){
+        this.uid = null;
+        UserData.userData = null;
+    }
 }

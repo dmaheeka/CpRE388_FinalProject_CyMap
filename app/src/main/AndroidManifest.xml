@@ -18,7 +18,7 @@
         <!-- Google Maps API Key (ensure this is correctly set up) -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
+            android:value="$AIzaSyDn5RA5nrA9DjHCJ3ehw7ixSSQuJapi978" />
 
         <!-- LoginActivity should be the first screen on startup -->
         <activity

@@ -65,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private EditText destSearchBar;
     private EditText stopSearchBar;
     private EditText buildingSearchBar;
+    private Button stopToggle;
 
     private Route currRoute;
     private boolean needToAddStop = false;
@@ -134,10 +135,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopSearchBar = findViewById(R.id.stopLocationEditText);
         stopSearchBar.setVisibility(View.INVISIBLE);
 
-
-        findViewById(R.id.addStopButton).setOnClickListener(v -> {
-            stopSearchBar.setVisibility(View.VISIBLE);
-            needToAddStop = true;
+        stopToggle = findViewById(R.id.addStopButton);
+        stopToggle.setOnClickListener(v -> {
+            if(needToAddStop){
+                stopSearchBar.setVisibility(View.INVISIBLE);
+                needToAddStop = false;
+                stopToggle.setText("ADD STOP");
+            } else {
+                stopSearchBar.setVisibility(View.VISIBLE);
+                needToAddStop = true;
+                stopToggle.setText("REMOVE");
+            }
         });
 
 

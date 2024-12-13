@@ -38,13 +38,28 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="maheeka" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/dmaheeka/CpRE388_FinalProject_CyMap.git",
+    "accountId": "c064b3d3-c5b3-432a-86c1-ba34a00015a7"
+  }
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="_Designer_Tab" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="2pOe7Xzm1uFznRRDjI1cinHFbFJ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -57,6 +72,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "recent__curruserdirection__nearbystops",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/mahee/AndroidStudioProjects/CpRE388_FinalProject_CyMap-master"
   }

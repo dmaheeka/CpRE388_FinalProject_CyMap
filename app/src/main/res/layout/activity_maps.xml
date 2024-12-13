@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity">
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/routeLayout"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="-2dp"
+        android:layout_marginEnd="-1dp"
+        android:layout_marginBottom="2dp" />
+
+    <LinearLayout
+        android:id="@+id/routeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:layout_above="@+id/StartInputLayout"
+        android:padding="8dp">
+
+        <ListView
+            android:id="@+id/routesListView"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="0.5dp"
+            android:fadeScrollbars="false"
+            android:layoutDirection="ltr"
+            android:padding="8dp"
+            android:scrollbarThumbVertical="@drawable/custom_scrollbar_thumb"
+            android:scrollbars="vertical" />
+
+        <Button
+        android:id="@+id/addRouteButton"
+        android:layout_width="93dp"
+        android:layout_height="60dp"
+        android:layout_centerVertical="true"
+        android:text="Save Route" />
+
+        <Button
+            android:id="@+id/btnShowPOIs"
+            android:text="Nearby"
+            android:layout_width="93dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/StartInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@+id/destInputLayout"
+        android:background="@android:color/white"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/startLocationEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Start Location..."
+            android:textColor="@color/black"
+            android:inputType="text"
+            android:cursorVisible="true"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/destInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/destLocationEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter a Destination..."
+            android:textColor="@color/black"
+            android:inputType="text"
+            android:cursorVisible="true"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/findDistanceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GO!" />
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/stepsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="110dp"
+        android:textSize="20sp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="60dp"
+        android:fadeScrollbars="false"
+        android:layoutDirection="ltr"
+        android:scrollbarThumbVertical="@drawable/custom_scrollbar_thumb"
+        android:scrollbars="vertical">
+
+
+    <TextView
+        android:id="@+id/directionsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+    </ScrollView>
+
+    <!-- Building Info Section: TextViews to display the building name and info -->
+    <LinearLayout
+        android:id="@+id/buildingInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:padding="8dp">
+
+    <EditText
+        android:id="@+id/buildingEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter a location..."
+        android:inputType="text"
+        android:cursorVisible="true"
+        android:textColor="@color/white"
+        android:imeOptions="actionSearch"
+        android:maxLines="1"
+        android:layout_weight="1" />
+
+
+    <Button
+        android:id="@+id/findBuildingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="search" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

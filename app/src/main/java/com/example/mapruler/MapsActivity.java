@@ -539,8 +539,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 @SuppressLint("DefaultLocale") String distanceFormatted = String.format("%.2f",distance);
                                 stepsTextView.setText("distance: " + distanceFormatted +
-                                                      " meters\n" + "steps: " + (int)(distance / .762)  +
-                                                      "\nMinutes: " + Math.round(distance / 0.95 /60));
+                                        " meters\n" + "steps: " + (int)(distance / .762)  +
+                                        "\nMinutes: " + Math.round(distance / 0.95 /60));
 
                             }
 

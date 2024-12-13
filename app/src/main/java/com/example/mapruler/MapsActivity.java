@@ -46,9 +46,9 @@ import com.google.maps.android.SphericalUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -63,9 +63,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayAdapter<Route> routesAdapter;
     private EditText startSearchBar;
     private EditText destSearchBar;
+    private EditText stopSearchBar;
     private EditText buildingSearchBar;
 
     private Route currRoute;
+    private boolean needToAddStop = false;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -127,15 +130,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Initialize the search bar
         startSearchBar = findViewById(R.id.startLocationEditText);
         destSearchBar = findViewById(R.id.destLocationEditText);
+        stopSearchBar = findViewById(R.id.stopLocationEditText);
+        stopSearchBar.setVisibility(View.GONE);
+
+
+        findViewById(R.id.addStopButton).setOnClickListener(v -> {
+                stopSearchBar.setVisibility(View.VISIBLE);
+                String startQuery = startSearchBar.getText().toString().trim().toLowerCase();
+                String stopQuery = stopSearchBar.getText().toString().trim().toLowerCase();
+                String destQuery = destSearchBar.getText().toString().trim().toLowerCase();
+                needToAddStop = true;
+                if (!stopQuery.isEmpty()) {
+                    // Search for the location without adding it to Firebase
+
+                    searchRouteWithStop(startQuery, stopQuery, destQuery);
+                    stopSearchBar.setVisibility(View.GONE);
+                    stopSearchBar.setText("");
+                }
+                else {
+                    // If the search bar is empty, show a toast message
+                    Toast.makeText(MapsActivity.this, "Please enter a valid stop location", Toast.LENGTH_SHORT).show();
+                }
+
+                });
 
 
         // Set up the search button functionality
         findViewById(R.id.findDistanceButton).setOnClickListener(v -> {
             String startQuery = startSearchBar.getText().toString().trim().toLowerCase();
+            String stopQuery = stopSearchBar.getText().toString().trim().toLowerCase();
             String destQuery = destSearchBar.getText().toString().trim().toLowerCase();
             if (!destQuery.isEmpty()) {
-                // Search for the location without adding it to Firebase
-                searchRoute(startQuery, destQuery);
+                if(!needToAddStop) {
+                    // Search for the location without adding it to Firebase
+                    searchRoute(startQuery, destQuery);
+                } else {
+                    searchRouteWithStop(startQuery, stopQuery, destQuery);
+                }
             } else {
                 // If the search bar is empty, show a toast message
                 Toast.makeText(MapsActivity.this, "Please enter a destination to search", Toast.LENGTH_SHORT).show();
@@ -316,6 +347,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Clear the search bars
         startSearchBar.setText("");
         destSearchBar.setText("");
+        stopSearchBar.setText("");
+        stopSearchBar.setVisibility(View.GONE);
 
         boolean fromCurrLoc = true;
         if(!startQuery.isEmpty()){
@@ -331,7 +364,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         coords.add(new LatLng(destCoord.latitude, destCoord.longitude));
         addresses.add(destQuery);
-        //TODO: add multi-stop functionality, indexing already implemented
+
 
         String name;
         if (fromCurrLoc) {
@@ -339,6 +372,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             name = startQuery + " to " + destQuery;
         }
+        Route newRoute = new Route(name, coords, addresses, fromCurrLoc);
+        applyRoute(newRoute);
+    }
+
+    private void searchRouteWithStop(String startQuery, String stopQuery, String destQuery) {
+        // Geocode the entered search query (manual address search)
+        LatLng startCoord = geocodeAddress(startQuery);
+        LatLng destCoord = geocodeAddress(destQuery);
+        LatLng stopCoord = geocodeAddress(stopQuery);
+
+        // Clear the search bars
+        startSearchBar.setText("");
+        destSearchBar.setText("");
+        stopSearchBar.setText("");
+        stopSearchBar.setVisibility(View.GONE);
+
+        boolean fromCurrLoc = true;
+        if(!startQuery.isEmpty()){
+            fromCurrLoc = false;
+        }
+        Log.d("fromCurrLoc", String.valueOf(fromCurrLoc));
+
+        ArrayList<LatLng> coords = new ArrayList<LatLng>();
+        ArrayList<String> addresses = new ArrayList<String>();
+        if(!fromCurrLoc){
+            coords.add(new LatLng(startCoord.latitude, startCoord.longitude));
+            addresses.add(startQuery);
+        }
+
+        coords.add(new LatLng(stopCoord.latitude, stopCoord.longitude));
+        addresses.add(stopQuery);
+
+        coords.add(new LatLng(destCoord.latitude, destCoord.longitude));
+        addresses.add(destQuery);
+
+        String name;
+        if (fromCurrLoc) {
+            name = "Curr Loc to " +stopQuery+ " to " + destQuery;
+        } else {
+            name = startQuery + " to " + stopQuery + " to " + destQuery;
+        }
+        Log.d("coords", coords.toString());
         Route newRoute = new Route(name, coords, addresses, fromCurrLoc);
         applyRoute(newRoute);
     }
@@ -423,8 +498,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void drawRoute(Route route) {
         // Build the GraphHopper API URL to request a walking route
-        String url = "https://graphhopper.com/api/1/" + formatRouteString(route) +
+        String formattedRoute = formatRouteString(route);
+        Log.d("Formatted Route", formattedRoute);
+
+        String url = "https://graphhopper.com/api/1/" + formattedRoute +
                 "&type=json&vehicle=foot&key=8d7f64ec-867f-4134-858d-cbc5a09ef9dc";
+
 
         // HTTP request to the GraphHopper
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -449,9 +528,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     .width(5)
                                     .color(getResources().getColor(R.color.colorPrimary));
 
-                            // Add the polyline to the map
                             mMap.clear();  // Clear previous route
                             mMap.addPolyline(polylineOptions);
+                            needToAddStop = false;
+
 
                             //  zoom the map to fit the polyline
                             LatLngBounds.Builder builder = new LatLngBounds.Builder();

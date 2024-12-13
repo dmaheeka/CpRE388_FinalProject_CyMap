@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_above="@+id/destInputLayout"
+        android:layout_above="@+id/stopInputLayout"
         android:background="@android:color/white"
         android:padding="8dp">
 
@@ -64,13 +64,43 @@
             android:id="@+id/startLocationEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Current Location"
+            android:hint="Starting Location..."
             android:textColor="@color/black"
             android:inputType="text"
             android:cursorVisible="true"
             android:imeOptions="actionSearch"
             android:maxLines="1"
             android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/stopInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@+id/destInputLayout"
+        android:background="@android:color/white"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/stopLocationEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter a Destination..."
+            android:textColor="@color/black"
+            android:inputType="text"
+            android:cursorVisible="true"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/addStopButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="add stop!" />
 
     </LinearLayout>
 
@@ -115,7 +145,7 @@
         android:layout_marginTop="60dp"
         android:fadeScrollbars="false"
         android:layoutDirection="ltr"
-        android:scrollbarThumbVertical="@drawable/custom_scrollbar_thumb"
+        android:scrollbarThumbVertical="@drawable/white_custom_scrollbar_thumb"
         android:scrollbars="vertical">
 
 

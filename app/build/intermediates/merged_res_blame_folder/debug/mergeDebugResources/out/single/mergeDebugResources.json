@@ -1,110 +1,130 @@
 [
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\xml_backup_rules.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\xml\\backup_rules.xml"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-nodpi_ic_bus_stop_marker.png.flat",
+        "source": "com.example.mapruler.app-main-41:/drawable-nodpi/ic_bus_stop_marker.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\layout_activity_maps.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\layout\\activity_maps.xml"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-xxxhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.mapruler.app-pngs-34:/drawable-xxxhdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-anydpi-v26\\ic_launcher.xml"
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable-xxhdpi_ic_launcher_foreground.png.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-pngs-34:\\drawable-xxhdpi\\ic_launcher_foreground.png"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-xhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.mapruler.app-pngs-34:/drawable-xhdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable_custom_scrollbar_thumb.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\drawable\\custom_scrollbar_thumb.xml"
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-mdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-nodpi_ic_default_marker.png.flat",
+        "source": "com.example.mapruler.app-main-41:/drawable-nodpi/ic_default_marker.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-mdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-mdpi\\ic_launcher.webp"
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable-mdpi_ic_launcher_foreground.png.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-pngs-34:\\drawable-mdpi\\ic_launcher_foreground.png"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
+        "source": "com.example.mapruler.app-pngs-34:/drawable-anydpi-v24/ic_launcher_foreground.xml"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\xml_data_extraction_rules.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\xml\\data_extraction_rules.xml"
+        "merged": "com.example.mapruler.app-debug-39:/layout_login_xml.xml.flat",
+        "source": "com.example.mapruler.app-main-41:/layout/login_xml.xml"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-hdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-hdpi\\ic_launcher_round.webp"
+        "merged": "com.example.mapruler.app-debug-39:/layout_building_popup.xml.flat",
+        "source": "com.example.mapruler.app-main-41:/layout/building_popup.xml"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-pngs-34:\\drawable-anydpi-v24\\ic_launcher_foreground.xml"
+        "merged": "com.example.mapruler.app-debug-39:/xml_backup_rules.xml.flat",
+        "source": "com.example.mapruler.app-main-41:/xml/backup_rules.xml"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-nodpi_ic_cafe_marker.png.flat",
+        "source": "com.example.mapruler.app-main-41:/drawable-nodpi/ic_cafe_marker.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-xxhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-xxhdpi\\ic_launcher.webp"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-ldpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.mapruler.app-pngs-34:/drawable-ldpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable-xhdpi_ic_launcher_foreground.png.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-pngs-34:\\drawable-xhdpi\\ic_launcher_foreground.png"
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable-hdpi_ic_launcher_foreground.png.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-pngs-34:\\drawable-hdpi\\ic_launcher_foreground.png"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-mdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.mapruler.app-pngs-34:/drawable-mdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-hdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.mapruler.app-pngs-34:/drawable-hdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-xxxhdpi\\ic_launcher.webp"
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-hdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\layout_login_xml.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\layout\\login_xml.xml"
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-xxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-hdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-hdpi\\ic_launcher.webp"
+        "merged": "com.example.mapruler.app-debug-39:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.mapruler.app-main-41:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable-xxxhdpi_ic_launcher_foreground.png.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-pngs-34:\\drawable-xxxhdpi\\ic_launcher_foreground.png"
+        "merged": "com.example.mapruler.app-debug-39:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.mapruler.app-main-41:/xml/data_extraction_rules.xml"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-mdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-mdpi\\ic_launcher_round.webp"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-nodpi_cy.jpg.flat",
+        "source": "com.example.mapruler.app-main-41:/drawable-nodpi/cy.jpg"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\raw_mapstyle_mine.json.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\raw\\mapstyle_mine.json"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-nodpi_arrow_icon.png.flat",
+        "source": "com.example.mapruler.app-main-41:/drawable-nodpi/arrow_icon.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable_ic_launcher_background.xml.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\drawable\\ic_launcher_background.xml"
+        "merged": "com.example.mapruler.app-debug-39:/raw_mapstyle_mine.json.flat",
+        "source": "com.example.mapruler.app-main-41:/raw/mapstyle_mine.json"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-xhdpi\\ic_launcher_round.webp"
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.mapruler.app-debug-39:/drawable_custom_scrollbar_thumb.xml.flat",
+        "source": "com.example.mapruler.app-main-41:/drawable/custom_scrollbar_thumb.xml"
+    },
+    {
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-xxxhdpi/ic_launcher_round.webp"
     },
     {
         "merged": "com.example.mapruler.app-debug-39:/layout_activity_maps.xml.flat",
         "source": "com.example.mapruler.app-main-41:/layout/activity_maps.xml"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\drawable-ldpi_ic_launcher_foreground.png.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-pngs-34:\\drawable-ldpi\\ic_launcher_foreground.png"
+        "merged": "com.example.mapruler.app-debug-39:/drawable-xxhdpi_ic_launcher_foreground.png.flat",
+        "source": "com.example.mapruler.app-pngs-34:/drawable-xxhdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-debug-39:\\mipmap-xhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mahee\\.gradle\\daemon\\8.7\\com.example.mapruler.app-main-41:\\mipmap-xhdpi\\ic_launcher.webp"
+        "merged": "com.example.mapruler.app-debug-39:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapruler.app-main-41:/mipmap-mdpi/ic_launcher_round.webp"
     }
 ]

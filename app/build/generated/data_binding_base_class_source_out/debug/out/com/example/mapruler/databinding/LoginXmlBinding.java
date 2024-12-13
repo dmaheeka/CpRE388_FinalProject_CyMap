@@ -31,14 +31,19 @@ public final class LoginXmlBinding implements ViewBinding {
   public final EditText password;
 
   @NonNull
+  public final Button signUpButton;
+
+  @NonNull
   public final EditText username;
 
   private LoginXmlBinding(@NonNull LinearLayout rootView, @NonNull Button loginButton,
-      @NonNull TextView loginTitle, @NonNull EditText password, @NonNull EditText username) {
+      @NonNull TextView loginTitle, @NonNull EditText password, @NonNull Button signUpButton,
+      @NonNull EditText username) {
     this.rootView = rootView;
     this.loginButton = loginButton;
     this.loginTitle = loginTitle;
     this.password = password;
+    this.signUpButton = signUpButton;
     this.username = username;
   }
 
@@ -87,6 +92,12 @@ public final class LoginXmlBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.sign_up_button;
+      Button signUpButton = ViewBindings.findChildViewById(rootView, id);
+      if (signUpButton == null) {
+        break missingId;
+      }
+
       id = R.id.username;
       EditText username = ViewBindings.findChildViewById(rootView, id);
       if (username == null) {
@@ -94,7 +105,7 @@ public final class LoginXmlBinding implements ViewBinding {
       }
 
       return new LoginXmlBinding((LinearLayout) rootView, loginButton, loginTitle, password,
-          username);
+          signUpButton, username);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

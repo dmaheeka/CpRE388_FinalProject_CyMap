@@ -24,37 +24,34 @@ public final class ActivityMapsBinding implements ViewBinding {
   private final RelativeLayout rootView;
 
   @NonNull
+  public final LinearLayout StartInputLayout;
+
+  @NonNull
   public final Button addRouteButton;
+
+  @NonNull
+  public final Button btnShowPOIs;
+
+  @NonNull
+  public final EditText buildingEditText;
 
   @NonNull
   public final LinearLayout buildingInfoLayout;
 
   @NonNull
-  public final TextView buildingInfoTextView;
+  public final LinearLayout destInputLayout;
 
   @NonNull
-  public final TextView buildingNameTextView;
+  public final EditText destLocationEditText;
+
+  @NonNull
+  public final TextView directionsTextView;
+
+  @NonNull
+  public final Button findBuildingButton;
 
   @NonNull
   public final Button findDistanceButton;
-
-  @NonNull
-  public final Button fromStartToDestinationButton;
-
-  @NonNull
-  public final LinearLayout inputLayout;
-
-  @NonNull
-  public final EditText locationEditText;
-
-  @NonNull
-  public final LinearLayout modeSelectionLayout;
-
-  @NonNull
-  public final EditText multiStopEditText;
-
-  @NonNull
-  public final Button multiStopRouteButton;
 
   @NonNull
   public final LinearLayout routeLayout;
@@ -68,35 +65,29 @@ public final class ActivityMapsBinding implements ViewBinding {
   @NonNull
   public final TextView stepsTextView;
 
-  @NonNull
-  public final Button toDestinationButton;
-
-  private ActivityMapsBinding(@NonNull RelativeLayout rootView, @NonNull Button addRouteButton,
-      @NonNull LinearLayout buildingInfoLayout, @NonNull TextView buildingInfoTextView,
-      @NonNull TextView buildingNameTextView, @NonNull Button findDistanceButton,
-      @NonNull Button fromStartToDestinationButton, @NonNull LinearLayout inputLayout,
-      @NonNull EditText locationEditText, @NonNull LinearLayout modeSelectionLayout,
-      @NonNull EditText multiStopEditText, @NonNull Button multiStopRouteButton,
+  private ActivityMapsBinding(@NonNull RelativeLayout rootView,
+      @NonNull LinearLayout StartInputLayout, @NonNull Button addRouteButton,
+      @NonNull Button btnShowPOIs, @NonNull EditText buildingEditText,
+      @NonNull LinearLayout buildingInfoLayout, @NonNull LinearLayout destInputLayout,
+      @NonNull EditText destLocationEditText, @NonNull TextView directionsTextView,
+      @NonNull Button findBuildingButton, @NonNull Button findDistanceButton,
       @NonNull LinearLayout routeLayout, @NonNull ListView routesListView,
-      @NonNull EditText startLocationEditText, @NonNull TextView stepsTextView,
-      @NonNull Button toDestinationButton) {
+      @NonNull EditText startLocationEditText, @NonNull TextView stepsTextView) {
     this.rootView = rootView;
+    this.StartInputLayout = StartInputLayout;
     this.addRouteButton = addRouteButton;
+    this.btnShowPOIs = btnShowPOIs;
+    this.buildingEditText = buildingEditText;
     this.buildingInfoLayout = buildingInfoLayout;
-    this.buildingInfoTextView = buildingInfoTextView;
-    this.buildingNameTextView = buildingNameTextView;
+    this.destInputLayout = destInputLayout;
+    this.destLocationEditText = destLocationEditText;
+    this.directionsTextView = directionsTextView;
+    this.findBuildingButton = findBuildingButton;
     this.findDistanceButton = findDistanceButton;
-    this.fromStartToDestinationButton = fromStartToDestinationButton;
-    this.inputLayout = inputLayout;
-    this.locationEditText = locationEditText;
-    this.modeSelectionLayout = modeSelectionLayout;
-    this.multiStopEditText = multiStopEditText;
-    this.multiStopRouteButton = multiStopRouteButton;
     this.routeLayout = routeLayout;
     this.routesListView = routesListView;
     this.startLocationEditText = startLocationEditText;
     this.stepsTextView = stepsTextView;
-    this.toDestinationButton = toDestinationButton;
   }
 
   @Override
@@ -126,9 +117,27 @@ public final class ActivityMapsBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.StartInputLayout;
+      LinearLayout StartInputLayout = ViewBindings.findChildViewById(rootView, id);
+      if (StartInputLayout == null) {
+        break missingId;
+      }
+
       id = R.id.addRouteButton;
       Button addRouteButton = ViewBindings.findChildViewById(rootView, id);
       if (addRouteButton == null) {
+        break missingId;
+      }
+
+      id = R.id.btnShowPOIs;
+      Button btnShowPOIs = ViewBindings.findChildViewById(rootView, id);
+      if (btnShowPOIs == null) {
+        break missingId;
+      }
+
+      id = R.id.buildingEditText;
+      EditText buildingEditText = ViewBindings.findChildViewById(rootView, id);
+      if (buildingEditText == null) {
         break missingId;
       }
 
@@ -138,57 +147,33 @@ public final class ActivityMapsBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.buildingInfoTextView;
-      TextView buildingInfoTextView = ViewBindings.findChildViewById(rootView, id);
-      if (buildingInfoTextView == null) {
+      id = R.id.destInputLayout;
+      LinearLayout destInputLayout = ViewBindings.findChildViewById(rootView, id);
+      if (destInputLayout == null) {
         break missingId;
       }
 
-      id = R.id.buildingNameTextView;
-      TextView buildingNameTextView = ViewBindings.findChildViewById(rootView, id);
-      if (buildingNameTextView == null) {
+      id = R.id.destLocationEditText;
+      EditText destLocationEditText = ViewBindings.findChildViewById(rootView, id);
+      if (destLocationEditText == null) {
+        break missingId;
+      }
+
+      id = R.id.directionsTextView;
+      TextView directionsTextView = ViewBindings.findChildViewById(rootView, id);
+      if (directionsTextView == null) {
+        break missingId;
+      }
+
+      id = R.id.findBuildingButton;
+      Button findBuildingButton = ViewBindings.findChildViewById(rootView, id);
+      if (findBuildingButton == null) {
         break missingId;
       }
 
       id = R.id.findDistanceButton;
       Button findDistanceButton = ViewBindings.findChildViewById(rootView, id);
       if (findDistanceButton == null) {
-        break missingId;
-      }
-
-      id = R.id.fromStartToDestinationButton;
-      Button fromStartToDestinationButton = ViewBindings.findChildViewById(rootView, id);
-      if (fromStartToDestinationButton == null) {
-        break missingId;
-      }
-
-      id = R.id.inputLayout;
-      LinearLayout inputLayout = ViewBindings.findChildViewById(rootView, id);
-      if (inputLayout == null) {
-        break missingId;
-      }
-
-      id = R.id.locationEditText;
-      EditText locationEditText = ViewBindings.findChildViewById(rootView, id);
-      if (locationEditText == null) {
-        break missingId;
-      }
-
-      id = R.id.modeSelectionLayout;
-      LinearLayout modeSelectionLayout = ViewBindings.findChildViewById(rootView, id);
-      if (modeSelectionLayout == null) {
-        break missingId;
-      }
-
-      id = R.id.multiStopEditText;
-      EditText multiStopEditText = ViewBindings.findChildViewById(rootView, id);
-      if (multiStopEditText == null) {
-        break missingId;
-      }
-
-      id = R.id.multiStopRouteButton;
-      Button multiStopRouteButton = ViewBindings.findChildViewById(rootView, id);
-      if (multiStopRouteButton == null) {
         break missingId;
       }
 
@@ -216,17 +201,10 @@ public final class ActivityMapsBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.toDestinationButton;
-      Button toDestinationButton = ViewBindings.findChildViewById(rootView, id);
-      if (toDestinationButton == null) {
-        break missingId;
-      }
-
-      return new ActivityMapsBinding((RelativeLayout) rootView, addRouteButton, buildingInfoLayout,
-          buildingInfoTextView, buildingNameTextView, findDistanceButton,
-          fromStartToDestinationButton, inputLayout, locationEditText, modeSelectionLayout,
-          multiStopEditText, multiStopRouteButton, routeLayout, routesListView,
-          startLocationEditText, stepsTextView, toDestinationButton);
+      return new ActivityMapsBinding((RelativeLayout) rootView, StartInputLayout, addRouteButton,
+          btnShowPOIs, buildingEditText, buildingInfoLayout, destInputLayout, destLocationEditText,
+          directionsTextView, findBuildingButton, findDistanceButton, routeLayout, routesListView,
+          startLocationEditText, stepsTextView);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

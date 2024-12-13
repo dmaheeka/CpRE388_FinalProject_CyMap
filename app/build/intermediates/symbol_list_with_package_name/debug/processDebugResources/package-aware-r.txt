@@ -3431,6 +3431,7 @@ drawable abc_textfield_search_material
 drawable abc_vector_test
 drawable amu_bubble_mask
 drawable amu_bubble_shadow
+drawable arrow_icon
 drawable avd_hide_password
 drawable avd_show_password
 drawable btn_checkbox_checked_mtrl
@@ -3461,6 +3462,7 @@ drawable common_google_signin_btn_text_light_focused
 drawable common_google_signin_btn_text_light_normal
 drawable common_google_signin_btn_text_light_normal_background
 drawable custom_scrollbar_thumb
+drawable cy
 drawable design_fab_background
 drawable design_ic_visibility
 drawable design_ic_visibility_off
@@ -3469,6 +3471,8 @@ drawable design_snackbar_background
 drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
 drawable ic_arrow_back_black_24
+drawable ic_bus_stop_marker
+drawable ic_cafe_marker
 drawable ic_call_answer
 drawable ic_call_answer_low
 drawable ic_call_answer_video
@@ -3477,6 +3481,7 @@ drawable ic_call_decline
 drawable ic_call_decline_low
 drawable ic_clear_black_24
 drawable ic_clock_black_24dp
+drawable ic_default_marker
 drawable ic_keyboard_black_24dp
 drawable ic_launcher_background
 drawable ic_launcher_foreground
@@ -3583,6 +3588,7 @@ id SHOW_ALL
 id SHOW_PATH
 id SHOW_PROGRESS
 id SYM
+id StartInputLayout
 id TOP_END
 id TOP_START
 id above
@@ -3681,6 +3687,8 @@ id browser_actions_menu_item_icon
 id browser_actions_menu_item_text
 id browser_actions_menu_items
 id browser_actions_menu_view
+id btnShowPOIs
+id buildingEditText
 id buildingInfoLayout
 id buildingInfoTextView
 id buildingNameTextView
@@ -3705,6 +3713,7 @@ id clear_text
 id clip_horizontal
 id clip_vertical
 id clockwise
+id closeButton
 id closest
 id collapseActionView
 id compress
@@ -3736,9 +3745,12 @@ id design_menu_item_action_area
 id design_menu_item_action_area_stub
 id design_menu_item_text
 id design_navigation_view
+id destInputLayout
+id destLocationEditText
 id dialog_button
 id dimensions
 id direct
+id directionsTextView
 id disableHome
 id disableIntraAutoTransition
 id disablePostScroll
@@ -3775,6 +3787,7 @@ id fill
 id fill_horizontal
 id fill_vertical
 id filled
+id findBuildingButton
 id findDistanceButton
 id fitCenter
 id fitEnd
@@ -3787,7 +3800,6 @@ id floating
 id follow_system
 id forever
 id fragment_container_view_tag
-id fromStartToDestinationButton
 id frost
 id fullscreen_header
 id ghost_view
@@ -3818,7 +3830,6 @@ id immediateStop
 id included
 id indeterminate
 id info
-id inputLayout
 id invisible
 id inward
 id italic
@@ -3836,7 +3847,6 @@ id line3
 id linear
 id listMode
 id list_item
-id locationEditText
 id login_button
 id login_title
 id m3_side_sheet
@@ -3869,7 +3879,6 @@ id matrix
 id message
 id middle
 id mini
-id modeSelectionLayout
 id month_grid
 id month_navigation_bar
 id month_navigation_fragment_toggle
@@ -3900,8 +3909,6 @@ id mtrl_picker_text_input_range_end
 id mtrl_picker_text_input_range_start
 id mtrl_picker_title_text
 id mtrl_view_tag_bottom_padding
-id multiStopEditText
-id multiStopRouteButton
 id multiply
 id navigation_bar_item_active_indicator_view
 id navigation_bar_item_icon_container
@@ -4020,6 +4027,7 @@ id shortcut
 id showCustom
 id showHome
 id showTitle
+id sign_up_button
 id sin
 id skipCollapsed
 id skipped
@@ -4089,7 +4097,6 @@ id time
 id title
 id titleDividerNoCustom
 id title_template
-id toDestinationButton
 id toggle
 id top
 id topPanel
@@ -4254,6 +4261,7 @@ layout amu_text_bubble
 layout amu_webview
 layout browser_actions_context_menu_page
 layout browser_actions_context_menu_row
+layout building_popup
 layout custom_dialog
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog

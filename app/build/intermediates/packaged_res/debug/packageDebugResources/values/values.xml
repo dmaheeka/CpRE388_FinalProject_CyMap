@@ -22,24 +22,23 @@
     <string name="title_activity_maps">MapsActivity</string>
     <style name="Theme.MapRuler" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         
-        <item name="colorPrimary">@color/gold</item>
-        <item name="colorPrimaryVariant">@color/red</item>
-        <item name="colorOnPrimary">@color/red</item>
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/gold</item>
         
         <item name="colorSecondary">@color/gold</item>
         <item name="colorSecondaryVariant">@color/gold</item>
         <item name="colorOnSecondary">@color/black</item>
         
         <item name="android:textColorPrimary">@color/black</item>
-        <item name="android:textColorSecondary">@color/black</item>
+        <item name="android:textColorSecondary">@color/white</item>
         
         <item name="android:windowBackground">@color/white</item>
 
-
         
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">?attr/colorOnSecondary</item>
         
-        <item name="android:navigationBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:navigationBarColor">?attr/colorOnSecondary</item>
 
 
         

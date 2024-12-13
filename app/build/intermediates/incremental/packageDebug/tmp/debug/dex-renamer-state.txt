@@ -1,10 +1,10 @@
-#Tue Nov 26 13:16:11 CST 2024
-base.0=C\:\\Users\\mahee\\AndroidStudioProjects\\CpRE388_FinalProject_CyMap-master\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=C\:\\Users\\mahee\\AndroidStudioProjects\\CpRE388_FinalProject_CyMap-master\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.2=C\:\\Users\\mahee\\AndroidStudioProjects\\CpRE388_FinalProject_CyMap-master\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\12\\classes.dex
-base.3=C\:\\Users\\mahee\\AndroidStudioProjects\\CpRE388_FinalProject_CyMap-master\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
-base.4=C\:\\Users\\mahee\\AndroidStudioProjects\\CpRE388_FinalProject_CyMap-master\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
-base.5=C\:\\Users\\mahee\\AndroidStudioProjects\\CpRE388_FinalProject_CyMap-master\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes3.dex
+#Fri Dec 13 10:12:07 CST 2024
+base.0=C\:\\Users\\Abiga\\AndroidStudioProjects\\MapRuler\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=C\:\\Users\\Abiga\\AndroidStudioProjects\\MapRuler\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.2=C\:\\Users\\Abiga\\AndroidStudioProjects\\MapRuler\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\12\\classes.dex
+base.3=C\:\\Users\\Abiga\\AndroidStudioProjects\\MapRuler\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
+base.4=C\:\\Users\\Abiga\\AndroidStudioProjects\\MapRuler\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+base.5=C\:\\Users\\Abiga\\AndroidStudioProjects\\MapRuler\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes3.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=12/classes.dex

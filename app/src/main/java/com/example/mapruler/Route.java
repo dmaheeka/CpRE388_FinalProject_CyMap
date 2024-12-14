@@ -9,10 +9,10 @@ import java.util.ArrayList;
  */
 public class Route {
 
-    public String name;
-    public ArrayList<LatLng> coordinates;
-    public ArrayList<String> addresses;
-    public boolean fromCurrentLocation;
+    private String name;
+    private ArrayList<LatLng> coordinates;
+    private ArrayList<String> addresses;
+    private boolean fromCurrentLocation;
 
     /**
      * Public constructor for the Route object, creates new, fully filled out
@@ -85,5 +85,15 @@ public class Route {
      */
     public ArrayList<String> getAddresses() {
         return addresses;
+    }
+
+    /**
+     * Returns whether the current route is supposed to start from current location or a given
+     * location
+     *
+     * @return true if from current location
+     */
+    public boolean isFromCurrentLocation() {
+        return fromCurrentLocation;
     }
 }

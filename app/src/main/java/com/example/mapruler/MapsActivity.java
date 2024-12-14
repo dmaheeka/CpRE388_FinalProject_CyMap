@@ -1,6 +1,4 @@
-/**
- * Main activity for the map.
- */
+
 package com.example.mapruler;
 
 import android.Manifest;
@@ -65,6 +63,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+/**
+ * Main activity for the map, shows the navigation screen and UI for selecting a route.
+ */
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, SensorEventListener {
 
     private GoogleMap mMap;
@@ -701,7 +702,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void applyRoute(Route route) {
         currRoute = route;
-        if(route.fromCurrentLocation){
+        if(route.isFromCurrentLocation()){
             // Check if permission to access fine location is granted
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {

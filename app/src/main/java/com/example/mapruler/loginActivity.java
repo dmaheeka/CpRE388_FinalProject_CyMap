@@ -19,6 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Activity got logging in or signing up with Firebase authentication.
+ */
 public class loginActivity extends AppCompatActivity {
 
     private EditText emailEditText;

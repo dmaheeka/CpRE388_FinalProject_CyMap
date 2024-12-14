@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import java.util.ArrayList;
 
+/**
+ * Fragment used to show building information when requested.
+ */
 public class BuildingInfoPopup extends DialogFragment {
 
 

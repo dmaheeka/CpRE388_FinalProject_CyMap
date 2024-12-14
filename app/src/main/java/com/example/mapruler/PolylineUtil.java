@@ -4,6 +4,10 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Helper class for converting encoded polyline response from the graphhopper API to usable LatLng
+ * points for Maps SDK.
+ */
 public class PolylineUtil {
 
     /**

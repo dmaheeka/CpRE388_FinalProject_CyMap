@@ -25,7 +25,14 @@ public class BuildingInfoPopup extends DialogFragment {
     private String buildingName;
     private ArrayList<String> businessHours;
 
-    // Factory method to create a new instance of the fragment
+    /**
+     * Creates a new building information popup
+     *
+     * @param buildingName public name of the building
+     * @param businessHours ArrayList of the lines of the hours text.
+     *
+     * @return BuildingInfoPopup fragment with the given information.
+     */
     public static BuildingInfoPopup newInstance(String buildingName, ArrayList<String> businessHours) {
         BuildingInfoPopup fragment = new BuildingInfoPopup();
         Bundle args = new Bundle();
